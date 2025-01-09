@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class Antilog {
+            constructor(id) {
+                this.id = id;
+
+            }
+
+            init() {
+                const html = `
+                    <p>
+                        <input id="number"><sub><input type="number" id="antilog"></sub>
+                        <button id="equal"> = </button>
+                        <input type="number" id="result" disabled>
+                    </p>
+                `;
+                const css = `
+                `;
+                document.getElementById("main").innerHTML = `
+                    ${html}
+                    <style>${css}</style>
+                `;
+            }
+
+            changer(number, antilog) {
+                const numberArr = number.split("");
+
+                const hexTable = {
+                    "A": 10,
+                    "B": 11,
+                    "C": 12,
+                    "D": 13,
+                    "E": 14,
+                    "F": 15
+                };
+
+                return number.split("").reduce((acc, cur, index, arr) => {
+                    if (cur in hexTable ) { cur = hexTable[cur] }
+                    return acc + (cur * antilog ** (arr.length - index - 1));
+                }, 0);
+            }
+
+            control() {
+                window.addEventListener("click", e => {
+                    const targetId = e.target.id;
+
+                    if (targetId === "equal") {
+                        const number = document.getElementById("number").value;
+                        const antilog = Number(document.getElementById("antilog").value);
+
+                        document.getElementById("result").value = this.changer(number, antilog);
+                    }
+                })
+            }
+
+            run() {
+                this.init();
+                this.control();
+            }
+        }
+
+        const antilog = new Antilog("main");
+        antilog.run();
+    </script>
+</body>
+
+</html>

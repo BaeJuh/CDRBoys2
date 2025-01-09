@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEL BOOK</title>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class TelBook {
+            constructor(id) {
+                this.id = id;
+
+                this.data = null;
+            }
+
+            async getTelData(target) {
+                const res = await fetch("./telbook.json");
+                const { tel: data } = await res.json();
+
+                this.data = data;
+                this.showScreen(target);
+            }
+
+            showScreen(target) {
+                const targetDom = document.getElementById(target);
+                this.data.forEach(data => {
+                    const {id, name, tel, gender} = data;
+                    
+                    targetDom.innerHTML += `
+                        <div id="tel_${id}" class="telBox">
+                            <h2>${name}</h2>
+                            <h2>${tel}</h2>
+                            <p>${gender}</p>
+                        </div>
+                    `;
+
+                });
+
+                const css = `
+                    <style>
+                        * {margin: 0; padding: 0}
+                        .telBox {
+                            background-color: #00AA00;
+                            color: white;
+                            border: 1px solid white;
+                            text-align: center;
+                            padding: 10px 0;
+                        }
+                    </style>
+                `;
+
+                targetDom.innerHTML += css;
+            }
+
+            run(target) {
+                this.getTelData(target);
+            }
+        }
+
+        const telBook = new TelBook("telBook");
+        telBook.run("main");
+    </script>
+</body>
+
+</html>

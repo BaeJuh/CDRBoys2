@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boxes</title>
+</head>
+<body>
+    <div id="target"></div>
+    <script>
+        class Box {
+            constructor(id) {
+                this.id = id;
+            }
+
+            dom(id) {
+                return document.getElementById(id);
+            }
+
+            random(min, max) {
+                return Math.floor( Math.random() * (max - min + 1) ) + min;
+            }
+
+            draw() {
+                const html = `
+                    <div id="${this.id}" class="${this.id}"></div>
+                `;
+                const css = `
+                    .${this.id} {
+                        position: absolute;
+                        width: ${this.random(10, 100)}px;
+                        height: ${this.random(10, 100)}px;
+                        background-color: #${this.random(0, 255**3).toString(16)};
+                        top: ${this.random(0, 100)}%;
+                        left: ${this.random(0, 100)}%;
+                    }
+                `;
+                this.dom("target").innerHTML += `
+                    ${html}
+                    <style>${css}</style>
+                `;
+            }
+        }
+
+        const boxList = [];
+        for(let i=0; i<100; i++) {
+            boxList.push(new Box(`box${i}`));
+            boxList[i].draw();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class ScoreBoard {
+            constructor(id) {
+                this.id = id;
+            }
+
+            async initJSON() {
+                const res = await fetch("./scoreTable.json", { method: "GET" });
+                const { className, classNumber, studentList: students } = await res.json();
+
+                console.log(students)
+                this.initScreen(`${classNumber} ${className}`);
+                this.initCanvas(students);
+                this.initRanking(students);
+            }
+
+            initScreen(title) {
+                const html = `
+                    <h1 class="title">${title}</h1>
+                    <div id="canvasArea" class="canvasArea"></div>
+                    <div id="rankingArea" class="rankingArea"></div>
+                `;
+
+                const css = `
+                    <style>
+                        * { margin: 0; padding:0; }
+                        .main { text-align: center; width: 100%; }
+                        .title { text-align: center; border-bottom: 2px dashed gray; padding: 10px;}
+                        .canvasName { margin: 5px; }
+                        .canvas {border: 1px solid skyblue;}
+                    </style>
+                `
+
+                document.getElementById("main").innerHTML = html + css;
+            }
+
+            initCanvas(students) {
+                class Canvas {
+                    constructor(id) {
+                        this.id = id;
+
+                        this.canvas = null;
+                        this.pen = null;
+
+                        this.yScale = 2.5;
+                        this.xScale = 80;
+                        this.blank = 30;
+                    }
+
+                    initCanvas() {
+                        const canvasName = document.createElement("h2");
+                        canvasName.innerText = this.id;
+                        canvasName.classList = "canvasName";
+                        const canvas = document.createElement("canvas");
+                        canvas.id = `canvas_${this.id}`;
+                        canvas.className = `canvas`;
+                        canvas.width = 500;
+                        canvas.height = 300;
+
+                        document.getElementById("canvasArea").appendChild(canvasName);
+                        document.getElementById("canvasArea").appendChild(canvas);
+
+                        this.canvas = canvas;
+                        this.pen = canvas.getContext("2d");
+                    }
+
+                    printDot(x, y) {
+                        this.pen.fillRect(x + this.blank, this.canvas.height - (y + this.blank), 1, 1);
+                    }
+
+                    printText(content, x, y) {
+                        this.pen.fillText(content, x, this.canvas.height - y);
+                    }
+
+                    printCross() {
+                        for (let x = 0; x < this.canvas.width; x++) {
+                            this.printDot(x, 0);
+                        }
+                        for (let y = 0; y < this.canvas.width; y++) {
+                            this.printDot(0, y);
+                        }
+                        for (let i = 1; i <= 10; i++) {
+                            this.printText(i * 10, 5, (i * 10 * this.yScale) + this.blank + 2);
+                        }
+                    }
+
+                    printStick(x, y, width, height) {
+                        this.pen.fillRect(x + this.blank, this.canvas.height - (y + this.blank), width, height);
+                    }
+
+                    drawCanvas(subjectData = []) {
+                        let total = 0;
+                        let count = 0;
+                        subjectData.forEach((subject, index) => {
+                            const { name, score } = subject;
+                            const height = this.yScale * score;
+                            this.pen.fillStyle = "blue";
+                            this.printStick((index + 1) * this.xScale, height, 30, height);
+                            this.pen.fillStyle = "black";
+                            this.printText(name, ((index + 1) * this.xScale) + this.blank + 2, 13);
+                            count++;
+                            total += score;
+                        });
+
+                        const avgScore = total / count;
+                        console.log(avgScore)
+
+                        this.pen.fillStyle = "red";
+                        for (let i = 0; i < this.canvas.width; i++) {
+                            this.printDot(i, avgScore * this.yScale);
+                        }
+                        this.pen.fillStyle = "black";
+                    }
+
+                    run(subjectData) {
+                        this.initCanvas();
+                        this.printCross();
+                        this.drawCanvas(subjectData);
+                    }
+                }
+
+                const reOrganizeData = this.reOrganizeBySubject(students);
+                const canvasList = [];
+                for (const subject in reOrganizeData) {
+                    const canvas = new Canvas(subject);
+                    canvas.run(reOrganizeData[subject]);
+                    canvasList.push(canvas);
+                }
+            }
+
+            initRanking(students) {
+                const avgMap = [];
+                students.forEach(student => {
+                    const { name, kor, eng, math } = student
+                    avgMap.push( [name, (Number(kor) + Number(eng) + Number(math))/3] );
+                });
+
+                const rankingMap = [...avgMap].sort((a, b) => { return b[1] - a[1] });
+                console.log(rankingMap);
+
+                rankingMap.forEach( (student, index) => {
+                    const [name, ] = student;
+                    document.getElementById("rankingArea").innerHTML += `
+                        <p class="ranking">${index + 1}등 : ${name}</p>
+                    `;
+                } );
+            }
+
+            reOrganizeBySubject(students) {
+                const formObj = {
+                    "국어": [],
+                    "영어": [],
+                    "수학": [],
+                }
+
+                students.forEach(student => {
+                    const { name, kor, eng, math } = student
+                    formObj["국어"].push({ name: name, score: kor });
+                    formObj["영어"].push({ name: name, score: eng });
+                    formObj["수학"].push({ name: name, score: math });
+                });
+
+                return formObj;
+            }
+        }
+
+        const scoreBoard = new ScoreBoard("main");
+        scoreBoard.initJSON();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class GraphDraw {
+            constructor(id) {
+                this.id = id;
+                this.scaleFactor = 40;
+                this.posX = 0;
+                this.posY = 0;
+                this.canvas = null;
+                this.pen = null;
+            }
+
+            $(id) {
+                return document.getElementById(id);
+            }
+            initScreen() {
+                const html = `
+                    <canvas id="canvas" class="canvas" width="600" height="600"></canvas>
+                    <p class="inputArea">A ( <input type="number" id="x1" class="input">, <input type="number" id="y1" class="input"> )</p>
+                    <p class="inputArea">B ( <input type="number" id="x2" class="input">, <input type="number" id="y2" class="input"> )</p>
+                    <p class="inputArea">Canvas Width : <input type="number" id="width" class="input"></p>
+                    <p class="inputArea">Canvas Height : <input type="number" id="height" class="input"></p>
+                    <p class="inputArea">Scale : <input type="number" id="scale" class="input"></p>
+                    <button id="draw" class="draw">DRAW</button>
+                    <div id="controlArea" class="controlArea">
+                        <button id="sizeup" class="control">+</button>
+                        <button id="up" class="control">UP</button>
+                        <button id="sizedown" class="control">-</button>
+                        <button id="left" class="control">LEFT</button>
+                        <button id="reset" class="control">RESET</button>
+                        <button id="right" class="control">RIGHT</button>
+                        <button id="" class="control blank"></button>
+                        <button id="down" class="control">DOWN</button>
+                        <button id="" class="control blank"></button>
+                    </div>
+                `;
+                const css = `
+                    <style>
+                        .main {
+                            text-align: center;
+                            margin: 20px auto;
+                        }
+                        .canvas {
+                            border: 5px solid gray; 
+                            border-radius: 10px;
+                        }
+                        .draw {
+                            width: 120px;
+                            height: 50px;
+                            margin: 10px;
+                            font-size: 20px;
+                            background-color: white;
+                            border: 2px solid black;
+                            border-radius: 25px;
+
+                            cursor: pointer
+                        }
+                            .draw:hover {
+                                border: 2px solid gray;
+                                color: gray;
+                            }
+                        .inputArea {
+                            font-size: 20px;
+                            font-weight: 600;
+                        }
+                            .input {
+                                margin: 5px 0;
+                                text-align: right;
+                                font-size: 20px;
+                                border-radius: 5px;
+                            }
+                        .controlArea {
+                            margin: auto;
+                            place-items: center;
+                            display: grid;
+                            grid-template-columns: 1fr 1fr 1fr;
+                            
+                            width: 200px;
+                            height: 200px;
+                        }
+                            .control {
+                                width: 66px;
+                                height: 66px;
+                                display: inline-block;
+                                font-size: 17px;
+                                background-color: white;
+                                border: 2px solid black;
+                                border-radius: 10px;
+                                
+                            }
+                                .control:hover {
+                                    border: none;
+                                    background-color: gray;
+                                    color: white;
+                                }
+                            .blank {
+                                visibility: hidden;
+                            }
+                    </style>
+                `;
+
+                this.$("main").innerHTML = `${html}${css}`;
+            }
+            initCanvas() {
+                this.canvas = this.$("canvas");
+                this.pen = this.canvas.getContext("2d");
+            }
+            modiDot(x, y) {
+                this.pen.fillRect(this.canvas.width / 2 + (x + this.posX * this.scaleFactor), this.canvas.height / 2 - (y + this.posY * this.scaleFactor), 1, 1);
+            }
+            scaleDot(x, y) {
+                this.modiDot(x * this.scaleFactor, y * this.scaleFactor);
+            }
+            printText(x, y, text) {
+                this.pen.fillText(text, this.canvas.width / 2 + (x + this.posX * this.scaleFactor), this.canvas.height / 2 - (y + this.posY * this.scaleFactor), 20);
+            }
+            Axis() {
+                for (let i = 0; i < (this.canvas.width + Math.abs(this.posX * this.scaleFactor)); i++) { // 축
+                    this.modiDot(i, 0);
+                    this.modiDot(-i, 0);
+                }
+                for (let i = -(this.canvas.height / 2); i < (this.canvas.height + Math.abs(this.posY * this.scaleFactor)); i++) { // 축
+                    this.modiDot(0, i);
+                    this.modiDot(0, -i);
+                }
+                for (let i = this.scaleFactor; i < (this.canvas.width + Math.abs(this.posX * this.scaleFactor)); i += this.scaleFactor) { // 눈금
+                    for (let j = 0; j < 6; j++) {
+                        this.modiDot(i, j);
+                        this.modiDot(i, -j);
+                        this.modiDot(-i, j);
+                        this.modiDot(-i, -j);
+                    }
+                    this.printText(i, -15, `${i / this.scaleFactor}`);
+                    this.printText(-i, -15, `${-i / this.scaleFactor}`);
+                }
+                for (let i = this.scaleFactor; i < (this.canvas.height + Math.abs(this.posY * this.scaleFactor)); i += this.scaleFactor) { // 눈금
+                    for (let j = 0; j < 6; j++) {
+                        this.modiDot(j, i);
+                        this.modiDot(-j, i);
+                        this.modiDot(j, -i);
+                        this.modiDot(-j, -i);
+                    }
+                    this.printText(8, i, `${i / this.scaleFactor}`);
+                    this.printText(8, -i, `${-i / this.scaleFactor}`);
+                }
+                this.printText(5, -12, "O");
+            }
+
+            canvasResetting() {
+                const width = this.$("width").value === "" ? 800 : this.$("width").value;
+                const height = this.$("height").value === "" ? 800 : this.$("height").value;
+                const scale = this.$("scale").value === "" ? this.scaleFactor : Number(this.$("scale").value);
+
+                this.canvas.width = width;
+                this.canvas.height = height;
+                this.scaleFactor = scale;
+            }
+
+            resetCanvas() {
+                this.pen.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.Axis();
+            }
+            drawGraph() {
+                this.resetCanvas();
+
+                let [x1, y1] = [Number(this.$("x1").value), Number(this.$("y1").value)];
+                let [x2, y2] = [Number(this.$("x2").value), Number(this.$("y2").value)];
+
+                (x1 > x2) && ([[x1, y1], [x2, y2]] = [[x2, y2], [x1, y1]]);
+
+                const formula = new Formula(this.id);
+                const returnFormula = formula.returnFormula([x1, y1], [x2, y2]);
+
+                for (let i = x1; i < x2; i += (1 / this.scaleFactor)) {
+                    this.scaleDot(i, returnFormula(i));
+                }
+            }
+
+            eventManager() {
+                const buttonList = ["draw", "sizeup", "sizedown", "up", "left", "right", "down", "reset"];
+                let originScaleFactor = 20;
+                addEventListener("click", (e) => {
+                    if (buttonList.includes(e.target.id)) {
+                        switch (e.target.id) {
+                            case "draw":
+                                this.canvasResetting();
+                                // this.drawGraph();
+                                break;
+                            case "sizeup":
+                                console.log("test")
+                                this.scaleFactor += originScaleFactor;
+                                // this.drawGraph();
+                                break;
+                            case "sizedown":
+                                this.scaleFactor = this.scaleFactor - originScaleFactor <= 0 ? this.scaleFactor : this.scaleFactor - originScaleFactor;
+                                // this.drawGraph();
+                                break;
+                            case "up":
+                                this.posY -= 1;
+                                // this.drawGraph();
+                                break;
+                            case "left":
+                                this.posX += 1
+                                // this.drawGraph();
+                                break;
+                            case "right":
+                                this.posX -= 1
+                                // this.drawGraph();
+                                break;
+                            case "down":
+                                this.posY += 1;
+                                // this.drawGraph();
+                                break;
+                            case "reset":
+                                this.posX = 0;
+                                this.posY = 0;
+                                this.canvasResetting();
+                                break;
+                        }
+                        this.drawGraph();
+                    }
+                });
+            }
+
+            run() {
+                this.initScreen();
+                this.initCanvas();
+                this.Axis();
+                this.eventManager();
+            }
+        }
+        class Formula {
+            constructor(id) {
+                this.id = id;
+            }
+
+            returnFormula(pos1, pos2) {
+                const [x1, y1] = pos1;
+                const [x2, y2] = pos2;
+
+                const inclination = (y1 - y2) / (x1 - x2);
+                const formula = (x) => {
+                    return inclination * (x - x1) + y1;
+                }
+
+                return formula;
+            }
+        }
+
+        const graph = new GraphDraw("main")
+        graph.run();
+    </script>
+</body>
+
+</html>

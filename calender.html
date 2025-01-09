@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        class Calender {
+            constructor(id) {
+                this.id = id;
+            }
+
+            dom(id) {
+                return document.getElementById(id);
+            }
+
+            init() {
+                const html = `
+                    <input id="year" type="number" value="2024">
+                    <select id="month">
+                        <option value="1">JAN</option>
+                        <option value="2">FEB</option>
+                        <option value="3">MAR</option>
+                        <option value="4">APR</option>
+                        <option value="5">MAY</option>
+                        <option value="6">JUN</option>
+                        <option value="7">JUL</option>
+                        <option value="8">AUG</option>
+                        <option value="9">SEP</option>
+                        <option value="10">OCT</option>
+                        <option value="11">NOV</option>
+                        <option value="12">DEC</option>
+                    </select>
+                    <button id="print">PRINT Calender</button>
+                    <div id="calenderArea" class="calenderArea">
+                        
+                    </div>
+                `;
+
+                const css = `
+                    .calenderArea {
+                        width: 294px;
+                        margin: 10px;
+                    }
+                    .cell {
+                        display; inline-block;
+                        float: left;
+                        width: 40px;
+                        height: 40px;
+                        border: 1px solid green;
+                        text-align: center;
+                        line-height: 40px;
+                        font-size: 20px;
+                    }
+                        .sat {
+                            color: blue;
+                        }
+                        .sun {
+                            color: red;
+                        }
+                `;
+
+                this.dom(this.id).innerHTML = `${html}<style>${css}</style>`
+            }
+
+            dayBox(day) {
+                return `<div id="day_${day}" class="cell">${day}</div>`;
+            }
+
+            resetCalender(targetDom) {
+                targetDom.innerHTML = `
+                    <div id="sun" class="cell sun">일</div>
+                    <div id="mon" class="cell">월</div>
+                    <div id="tue" class="cell">화</div>
+                    <div id="wed" class="cell">수</div>
+                    <div id="thu" class="cell">목</div>
+                    <div id="fri" class="cell">금</div>
+                    <div id="sat" class="cell sat">토</div>
+                `;
+            }
+
+            printCalender(targetDom) {
+                const inputYear = this.dom("year").value;
+                const inputMonth = this.dom("month").value;
+
+                const date = new Date(`${inputYear}/${inputMonth}/1`);
+
+                // console.log(inputYear + "/" + inputMonth);
+                for (let i = 0; i < date.getDay(); i++) {
+                    targetDom.innerHTML += this.dayBox("");
+                }
+
+                for (let i = 1; i <= 31; i++) {
+                    date.setDate(i);
+                    if (i > 1 && date.getDate() === 1) {
+                        break;
+                    }
+                    
+                    targetDom.innerHTML += this.dayBox(`${i}`);
+
+                    switch (date.getDay()) {
+                        case 0:
+                            this.dom(`day_${i}`).classList.add("sun");
+                            break;
+                        case 6:
+                            this.dom(`day_${i}`).classList.add("sat");
+                            break;
+                    }
+                }
+                console.log(6 - date.getDay())
+                console.log(date.getDate())
+                for (let i = 0; i < (6 - date.getDay()); i++) {
+                    targetDom.innerHTML += this.dayBox("");
+                }
+            }
+
+            eventManager() {
+                addEventListener("click", (e) => {
+                    switch (e.target.id) {
+                        case "print":
+                            this.resetCalender(this.dom("calenderArea"));
+                            this.printCalender(this.dom("calenderArea"));
+                            break;
+                    }
+                });
+            }
+
+            run() {
+                this.init();
+                this.eventManager();
+            }
+        }
+        const calender = new Calender("main");
+        calender.run();
+    </script>
+</body>
+
+</html>

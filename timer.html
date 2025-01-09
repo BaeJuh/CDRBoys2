@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .timerArea {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: orange;
+            color: white;
+            text-align: center;
+            line-height: 100px;
+            font-size: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="timeArea" class="timerArea">0</div>
+    <button id="start">START</button>
+    <button id="stop">STOP</button>
+    <button id="reset">RESET</button>
+    <script>
+        class Timer {
+            constructor(id) {
+                this.id = id;
+                this.time = 0;
+                this.timer = null;
+                this.isStart = false;
+            }
+
+            start() {
+                if (this.isStart === false) {
+                    this.isStart = !this.isStart;
+                    let i = 0;
+
+                    this.timer = setInterval(() => {
+                        this.time++;
+
+                        document.getElementById("timeArea").innerText = `${this.time}`;
+                    }, 1000);
+                }
+            }
+            stop() {
+                if (this.isStart === true) {
+                    this.isStart = !this.isStart;
+                    clearInterval(this.timer);
+                }
+            }
+            reset() {
+                if (this.isStart === true) {
+                    this.isStart = !this.isStart;
+                    clearInterval(this.timer);
+                }
+                this.time = 0;
+                document.getElementById("timeArea").innerText = `${0}`;
+            }
+
+            eventsManager() {
+                window.addEventListener("click", (e) => {
+                    switch (e.target.id) {
+                        case "start":
+                            this.start();
+                            break;
+                        case "stop":
+                            this.stop();
+                            break;
+                        case "reset":
+                            this.reset();
+                            break;
+                    }
+                });
+            }
+
+            run() {
+                this.eventsManager();
+            }
+        }
+        const timer = new Timer();
+        timer.run();
+
+    </script>
+</body>
+
+</html>

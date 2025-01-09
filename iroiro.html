@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여러가지</title>
+</head>
+
+<body>
+    <div id="main">
+        <button id="fibonacci">Fibonacci</button>
+        <button id="oneToHundred">0 ~ 100</button>
+        <button id="palindrome">Palindrome</button>
+        <button id="exponent">지수 표기</button>
+        <button id="pizza">피자</button>
+        <div id="contentArea">
+            <!-- <div id="fibonacciArea"></div>
+            <div id="oneToHundredArea"></div> -->
+        </div>
+
+
+    </div>
+    <script>
+        /*
+            피보나치 (100보다 작은 값)
+            0 ~ 100까지 정수 100개 입력받고 평균, 중앙값, 최대, 최소 출력
+            문자열 palindrome 체크
+            -100,000 ~ 100,000 실수 100개를 생성해 평균을 지수표기로 출력
+            원(반지름 100)을 숫자를 입력 받아 n 등분
+        */
+        class MathSet {
+            constructor(id) {
+                this.id = id;
+            }
+
+            initScreen() {
+                const html = `
+                    
+                `;
+            }
+
+            fibonacci() {
+                const limit = 100;
+                const resultArr = [1, 1];
+                while (true) {
+                    const len = resultArr.length;
+                    const cur = resultArr[len - 1] + resultArr[len - 2];
+                    if (cur > limit) break;
+                    resultArr.push(cur);
+                }
+
+                return resultArr;
+            }
+
+            fibonacciScreen() {
+                const html = `
+                    <h2>100보다 작은 피보나치 수열</h2>
+                    <p id="fibonacciResult">${this.fibonacci().reduce((acc, cur) => `${acc}, ${cur}`)}</p>
+                `;
+
+                return html;
+            }
+
+            oneToHundred(numberArray) {
+                const len = numberArray.reduce((acc, cur) => {
+                    return acc + 1;
+                }, 0);
+
+                const getAverage = () => {
+                    return numberArray.reduce((acc, cur) => acc + cur) / len;
+                }
+                const getMedium = () => {
+                    let copiedArr = [...numberArray];
+
+                    /////////////////////////// sorting
+                    const merge = (arrA = [], arrB = []) => {
+                        const result = [];
+                        let [posA, posB] = [0, 0];
+
+                        const processCount = arrA.length + arrB.length;
+
+                        for (let i = 0; i < processCount; i++) {
+                            if (arrA[posA] <= arrB[posB] || posB === arrB.length) {
+                                result.push(arrA[posA]);
+                                posA += 1;
+                                continue;
+                            }
+                            if (arrB[posB] <= arrA[posA] || posA === arrA.length) {
+                                result.push(arrB[posB]);
+                                posB += 1;
+                                continue;
+                            }
+                        }
+
+                        return result;
+                    }
+
+                    let arr = copiedArr.map(v => [v]);
+                    // console.log(arr)
+
+                    while (true) {
+                        let mergeArr = [];
+                        let temp = null;
+
+                        for (let i = 0; i < arr.length; i += 2) {
+                            temp = merge(arr[i], arr[i + 1]);
+
+                            mergeArr.push(temp);
+                        }
+                        // console.log("----------")
+                        // console.log(mergeArr);
+                        if (temp.length === len) {
+                            copiedArr = mergeArr;
+                            break;
+                        }
+                        arr = mergeArr;
+                    }
+
+                    console.log(copiedArr)
+
+                    /////////////////////////// sorting
+
+                    if (len % 2 === 0) {
+                        return (copiedArr[len / 2 - 1] + copiedArr[len / 2]) / 2;
+                    } else {
+                        return copiedArr[Math.floor(len / 2)];
+                    }
+                }
+                const getMax = () => {
+                    return Math.max(...numberArray);
+                }
+                const getMin = () => {
+                    return Math.min(...numberArray);
+                }
+
+                return {
+                    "average": getAverage(),
+                    "medium": getMedium(),
+                    "max": getMax(),
+                    "min": getMin(),
+                }
+            }
+
+            oneToHundredScreen() {
+                const randomHundred = [...new Array(100)].map((_, i) => Math.floor(Math.random() * (100 + 1)));
+                const inputList = [];
+                randomHundred.forEach((num, index) => {
+                    const inputTag = `<input type="number" class="number" id="num${index}" value="${num}">`;
+                    inputList.push(inputTag);
+                });
+
+                const result = this.oneToHundred(randomHundred);
+
+                const html = `
+                    ${inputList.join("")}
+                    <div id="oneToHundredResult">
+                        <p>평균 : ${result["average"]}</p>
+                        <p>중앙값 : ${result["medium"]}</p>
+                        <p>최댓값 : ${result["max"]}</p>
+                        <p>최솟값 : ${result["min"]}</p>
+                    </div>
+                `;
+
+                const css = `
+                    <style>
+                        .number {
+                            width: 40px;
+                            text-align: right;
+                            margin: 3px;
+                        }
+                        p::after{
+                            content: "🧛‍♀️";
+                        }
+                    </style>
+                `;
+
+                return html + css;
+            }
+
+            palindromeScreen() {
+                const id = "inputString";
+                const html = `
+                    <input type="text" id="${id}">
+                    <button id="palindromeButton">결과 보기</button>
+                `;
+            }
+
+            eventManager() {
+                const buttonList = ["fibonacci", "oneToHundred", "palindrome", "exponent", "pizza"];
+
+                addEventListener("click", (e) => {
+                    if (buttonList.includes(e.target.id)) {
+                        let content = null;
+                        switch (e.target.id) {
+                            case "fibonacci":
+                                content = this.fibonacciScreen();
+                                break;
+                            case "oneToHundred":
+                                content = this.oneToHundredScreen();
+                                break;
+                            case "palindrome":
+                                content = "";
+                                break;
+                            case "exponent":
+                                content = "";
+                                break;
+                            case "pizza":
+                                content = "";
+                                break;
+                        }
+                        if (content !== null) {
+                            document.getElementById("contentArea").innerHTML = content;
+                        }
+                    }
+                });
+            }
+
+            run() {
+                this.initScreen();
+                this.eventManager();
+            }
+        }
+        const mathSet = new MathSet("main");
+        mathSet.run();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Drawer</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class Drawer {
+            constructor(id) {
+                this.id = id;
+                this.canvas = null;
+                this.pen = null;
+                this.scaleFactor = 25;
+
+                this.viewX = 0;
+                this.viewY = 0;
+            }
+
+            init() {
+                const html = `
+                    <canvas id="canvas" class="canvas" width="500" height="500"></canvas>
+                    <div class="buttonArea">
+                        <button id="xReflect" class="btn">X축 대칭</button>
+                        <button id="yReflect" class="btn">Y축 대칭</button>
+                        <button id="xyReflect" class="btn">원점 대칭</button>
+                        <button id="reset" class="btn reset">초기화</button>
+                    </div>
+                    <div class="buttonArea">
+                        <button id="scaleUp" class="btn">확대</button>
+                        <button id="scaleDown" class="btn">축소</button>
+                        <div class="directButtonArea">
+                            <button id="up" class="btn">상</button><br>
+                            <button id="left" class="btn">좌</button>
+                            <button class="dummy"></button>
+                            <button id="right" class="btn">우</button><br>
+                            <button id="down" class="btn">하</button>
+                        </div>
+                    </div>
+                `;
+                const css = `
+                    <style>
+                        .main {
+                            text-align: center;
+                            padding: 50px;
+                        }
+                        .canvas {
+                            border: 3px solid orange;
+                            border-radius: 10px;
+                        }
+                        .buttonArea {
+                            margin: 10px 0;
+                        }
+                        .btn {
+                            margin-top: 5px;
+                            font-size: 20px;
+                            color: white;
+                            padding: 5px 10px;
+                            background-color: orange;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                        }
+                            .btn:hover {
+                                background-color: #EF9510;
+                            }
+                        .reset {
+                            background-color: tomato;
+                        }
+                            .reset:hover {
+                                background-color: #EF5337;
+                            }
+                        .dummy {
+                            width: 30px;
+                            visibility: hidden;
+                        }
+                    </style>
+                    `
+
+                document.getElementById("main").innerHTML = html + css;
+            }
+
+            setCanvas() {
+                this.canvas = document.getElementById("canvas");
+                this.pen = this.canvas.getContext("2d");
+            }
+
+            drawDot(x, y) {
+                this.pen.fillRect(this.canvas.width / 2 + ((x - this.viewX) * this.scaleFactor), this.canvas.height / 2 - ((y - this.viewY) * this.scaleFactor), 1, 1)
+            }
+
+            printText(x, y, text) {
+                this.pen.fillText(text, this.canvas.width / 2 + ((x - this.viewX) * this.scaleFactor), this.canvas.height / 2 - ((y - this.viewY) * this.scaleFactor), 20);
+            }
+
+            crossLine() {
+                for (let i = 0; i < this.canvas.width / 2; i += (1 / this.scaleFactor)) {
+                    this.drawDot(i, 0);
+                    this.drawDot(-i, 0);
+                }
+                for (let i = 0; i < this.canvas.height / 2; i += (1 / this.scaleFactor)) {
+                    this.drawDot(0, i);
+                    this.drawDot(0, -i);
+                }
+                for (let i = 1; i < this.canvas.width / 2; i += 1) {
+                    for (let j = 0; j < 6; j++) {
+                        this.drawDot(i, j / this.scaleFactor);
+                        this.drawDot(i, -j / this.scaleFactor);
+                        this.drawDot(-i, j / this.scaleFactor);
+                        this.drawDot(-i, -j / this.scaleFactor);
+                    }
+                    this.printText(i, 6 / this.scaleFactor, `${i}`);
+                    this.printText(-i, 6 / this.scaleFactor, `${-i}`);
+                }
+                for (let i = 1; i < this.canvas.height / 2; i += 1) {
+                    for (let j = 0; j < 6; j++) {
+                        this.drawDot(j / this.scaleFactor, i);
+                        this.drawDot(-j / this.scaleFactor, i);
+                        this.drawDot(j / this.scaleFactor, -i);
+                        this.drawDot(-j / this.scaleFactor, -i);
+                    }
+                    this.printText(8 / this.scaleFactor, i, `${i}`);
+                    this.printText(8 / this.scaleFactor, -i, `${-i}`);
+                }
+            }
+
+            multiplication(reflectMatrix, pos) {
+                const result = [];
+
+                for (let i = 0; i < reflectMatrix.length; i++) {
+                    result.push([]);
+                    for (let j = 0; j < pos[0].length; j++) {
+                        let temp = 0
+                        for (let k = 0; k < reflectMatrix[0].length; k++) {
+                            temp += (reflectMatrix[i][k] * pos[k][j]);
+                        }
+                        result[i].push(temp);
+                    }
+                }
+                return result;
+            }
+
+            posConverter(posX, posY, reflectMatrix) {
+                const newPosX = [];
+                const newPosY = [];
+                for (let i = 0; i < posX.length; i++) {
+                    const pos = [[posX[i]], [posY[i]], [0]];
+                    // console.log(reflectMatrix)
+
+                    const [[x], [y]] = this.multiplication(reflectMatrix, pos);
+                    newPosX.push(x);
+                    newPosY.push(y);
+                }
+
+                return [newPosX, newPosY];
+            }
+
+            getFormula(pos1 = [], pos2 = []) {
+                const [x1, y1] = pos1;
+                const [x2, y2] = pos2;
+
+                return (x) => {
+                    return (((y1 - y2) / (x1 - x2)) * (x - x1) + y1);
+                }
+            }
+
+            drawLine(posX, posY) {
+                for (let i = 0; i < posX.length - 1; i++) {
+                    let pos1 = [posX[i], posY[i]];
+                    let pos2 = [posX[i + 1], posY[i + 1]];
+
+                    (posX[i] > posX[i + 1]) && ([pos1, pos2] = [pos2, pos1]);
+
+                    const f = this.getFormula(pos1, pos2);
+                    for (let x = pos1[0]; x <= pos2[0]; x += (1 / this.scaleFactor)) {
+                        this.drawDot(x, f(x));
+                    }
+                }
+
+            }
+
+            drawNewLine(newPosX, newPosY) {
+                if (newPosX !== null && newPosY !== null) {
+                    this.pen.fillStyle = "#EF9510";
+                    this.drawLine(newPosX, newPosY);
+                    this.pen.fillStyle = "black";
+                }
+            }
+
+            clearCanvas() {
+                this.pen.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.crossLine();
+            }
+
+            eventManager(posX, posY) {
+                if (posX.length === posY.length) {
+                    this.drawLine(posX, posY);
+
+                    // 변수들
+                    const reflectMatrix = {
+                        "xReflect": [
+                            [1, 0, 0],
+                            [0, -1, 0],
+                            [0, 0, 0]
+                        ],
+                        "yReflect": [
+                            [-1, 0, 0],
+                            [0, 1, 0],
+                            [0, 0, 0]
+                        ],
+                        "xyReflect": [
+                            [-1, 0, 0],
+                            [0, -1, 0],
+                            [0, 0, 0]
+                        ]
+                    }
+                    const buttonList = [
+                        "reset", "scaleUp", "scaleDown", "up", "down", "left", "right"
+                    ];
+                    let [newPosX, newPosY] = [null, null];
+
+                    // 이벤트 처리
+                    addEventListener("click", (e) => {
+                        if (e.target.id in reflectMatrix) {
+                            this.clearCanvas();
+                            [newPosX, newPosY] = this.posConverter(posX, posY, reflectMatrix[e.target.id]);
+                            this.drawLine(posX, posY);
+                            this.drawNewLine(newPosX, newPosY);
+                        } else if (buttonList.includes(e.target.id)) {
+                            switch (e.target.id) {
+                                case "reset":
+                                    this.scaleFactor = 25;
+                                    [this.viewX, this.viewY] = [0, 0];
+                                    [newPosX, newPosY] = [null, null];
+                                    break;
+                                case "scaleUp":
+                                    this.scaleFactor *= 1.5;
+                                    break;
+                                case "scaleDown":
+                                    this.scaleFactor /= 1.5;
+                                    break;
+                                case "up":
+                                    this.viewY += 1;
+                                    break;
+                                case "down":
+                                    this.viewY -= 1;
+                                    break;
+                                case "left":
+                                    this.viewX -= 1;
+                                    break;
+                                case "right":
+                                    this.viewX += 1;
+                                    break;
+                            }
+                            this.clearCanvas();
+                            this.drawLine(posX, posY);
+                            this.drawNewLine(newPosX, newPosY);
+                        }
+                    });
+                }
+            }
+
+            run(posX, posY) {
+                this.init();
+                this.setCanvas();
+                this.crossLine();
+                this.eventManager(posX, posY);
+            }
+        }
+
+        const main = (() => {
+            const posX = [-1, -4, -3, -2, -1, 0, 1, 2, 3, 4, -1];
+            const posY = [-3, 2, 3, 2, 1, 0, -1, -2, -3, -6, -3];
+
+            const drawer = new Drawer("main");
+            drawer.run(posX, posY);
+        })();
+    </script>
+</body>
+
+</html>

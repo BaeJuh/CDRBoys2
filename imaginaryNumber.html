@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class ImaginaryNumber {
+            constructor(id) {
+                this.id = id;
+
+            }
+
+            init() {
+                const html = `
+                    <div id="front">
+                        <input id="front_number" type="number"> +
+                        <input id="front_imaginary" type="number">i
+                    </div>
+                    <button id="plus"> Plus </button>
+                    <button id="multiplication"> Multiplication </button>
+                    <div id="back">
+                        <input id="back_number" type="number"> + 
+                        <input id="back_imaginary" type="number">i
+                    </div>
+                    <p>=</p>
+                    <div id="back">
+                        <input id="result_number" type="number" disabled> +
+                        <input id="result_imaginary" type="number" disabled>i
+                    </div>
+                `;
+                const css = `
+
+                `;
+                document.getElementById("main").innerHTML = `
+                    ${html}
+                    <style>${css}</style>
+                `;
+            }
+
+            sum(frontNum, frontImaginary, backNum, backImaginary) {
+                return [frontNum + backNum, frontImaginary + backImaginary];
+            }
+
+            mul(frontNum, frontImaginary, backNum, backImaginary) {
+                return [frontNum * backNum - frontImaginary * backImaginary, frontNum * backImaginary + frontImaginary * backNum];
+            }
+
+            control() {
+                const operator = {
+                    "plus": this.sum,
+                    "multiplication": this.mul
+                };
+                window.addEventListener("click", (e) => {
+                    const targetId = e.target.id;
+                    if (targetId in operator) {
+                        const frontNumber = document.getElementById("front_number").value === "" ? 0 : Number(document.getElementById("front_number").value);
+                        const frontImaginary = document.getElementById("front_imaginary").value === "" ? 0 : Number(document.getElementById("front_imaginary").value);
+                        const backNumber = document.getElementById("back_number").value === "" ? 0 : Number(document.getElementById("back_number").value);
+                        const backImaginary = document.getElementById("back_imaginary").value === "" ? 0 : Number(document.getElementById("back_imaginary").value);
+
+                        [document.getElementById("result_number").value, document.getElementById("result_imaginary").value] = operator[targetId](frontNumber, frontImaginary, backNumber, backImaginary);
+                    }
+
+                });
+            }
+
+            run() {
+                this.init();
+                this.control();
+            }
+        }
+
+        const imaginaryNumber = new ImaginaryNumber("main");
+        imaginaryNumber.run();
+    </script>
+</body>
+
+</html>

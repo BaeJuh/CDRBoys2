@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        const p = [true, false];
+        const q = [true, false];
+        const r = [];
+
+
+
+        const changer = (bool) => {
+            return bool ? "T" : "F";
+        }
+
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                const result = ((!p[i] && q[i]) || (p[i] && !q[i]));
+                document.write(`(~${changer(p[i])} &#x2227; ${changer(q[i])}) &#x2228; (${changer(p[i])} &#x2227; ~${changer(q[i])}) = ${changer(result)}<br>`);
+                r.push(result);
+            }
+        }
+    </script>
+</body>
+
+</html>

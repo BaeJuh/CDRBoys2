@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * { margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class Lowest {
+            constructor(id) {
+                this.id = id;
+
+            }
+
+            init() {
+                const html = `
+                    <div id="input">
+                        <input id="bunza" type="number">
+                        <br>--------<br>
+                        <input id="bunmo" type="number">
+                    </div>
+                    <button id="change">Change</button>
+                    <div id="result">
+                        <input id="r_bunza" type="number" disabled>
+                        <br>--------<br>
+                        <input id="r_bunmo" type="number" disabled>
+                    </div>
+                `;
+                const css = `
+                    .main {
+                        display: flex;
+                    }
+                    input {text-align: right;}
+                `;
+                document.getElementById("main").innerHTML = `
+                    ${html}
+                    <style>${css}</style>
+                `;
+            }
+
+            getMaxCommonDivisor(bunmo, bunza) {
+                let divisor = 0;
+                const smallerNum = bunmo < bunza ? bunmo : bunza;
+
+                for(let i=1; i<=smallerNum; i++) {
+                    if (bunmo%i === 0 && bunza%i === 0) {
+                        divisor = i;
+                    }
+                }
+
+                return divisor;
+            }
+
+            makeLowest() {
+                document.getElementById("change").addEventListener("click", ()=>{
+                    const bunmo = document.getElementById("bunmo").value === "" ? 0 : Number(document.getElementById("bunmo").value);
+                    const bunza = document.getElementById("bunza").value === "" ? 0 : Number(document.getElementById("bunza").value);
+                    
+                    const maxCommonDivisor = this.getMaxCommonDivisor(bunmo, bunza);
+                    console.log(maxCommonDivisor)
+
+                    document.getElementById("r_bunmo").value = bunmo/maxCommonDivisor;
+                    document.getElementById("r_bunza").value = bunza/maxCommonDivisor;
+                });
+            }
+
+            run() {
+                this.init();
+                this.makeLowest();
+            }
+        }
+
+        const lowest = new Lowest("main");
+        lowest.run();
+    </script>
+</body>
+</html>

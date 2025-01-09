@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max Min</title>
+</head>
+
+<body>
+    <div id="main"></div>
+    <script>
+        class MaxMin {
+            constructor(id) {
+                this.id = id;
+            }
+
+            dom(id) {
+                return document.getElementById(id);
+            }
+
+            initDisplay() {
+                const html = `
+                    <input id="fir" type="number" value="0">
+                    <input id="sec" type="number" value="0">
+                    <input id="trd" type="number" value="0">
+                    <article>
+                        <button id="max">Maximum</button>
+                        <button id="min">Minimum</button>
+                    </article>
+                    <p id="result"></p>
+                `;
+
+                const css = `
+
+                `;
+
+                this.dom("main").innerHTML = `${html}`;
+            }
+
+            calc() {
+                const [fir, sec, trd] = [
+                    Number(this.dom("fir").value), Number(this.dom("sec").value), Number(this.dom("trd").value)
+                ];
+
+                const calc = new Calc(this.id);
+                return calc.result([fir, sec, trd]);
+            }
+
+            getMin() {
+                return this.calc().min;
+            }
+
+            getMax() {
+                return this.calc().max;
+            }
+
+            eventManager() {
+                addEventListener("click", (e) => {
+                    switch (e.target.id) {
+                        case "max":
+                            this.dom("result").innerText = this.getMax();
+                            break;
+                        case "min":
+                            this.dom("result").innerText = this.getMin();
+                            break;
+                    }
+                });
+            }
+
+            run() {
+                this.initDisplay();
+                this.eventManager();
+            }
+        }
+
+        class Calc {
+            constructor(id) {
+                this.id = id;
+            }
+
+            result(values) {
+
+                return {
+                    "max": Math.max(...values),
+                    "min": Math.min(...values)
+                };
+            }
+        }
+
+        const maxmin = new MaxMin("main");
+        maxmin.run();
+    </script>
+</body>
+
+</html>

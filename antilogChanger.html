@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+
+    <script>
+        class Antilog {
+            constructor(id) {
+                this.id = id;
+
+            }
+
+            init() {
+                const html = `
+                    <div class="wrapper">
+                        <p>
+                            <input id="number" class="input">
+                            <sub><input type="number" id="antilog" class="input"></sub>
+                        </p>
+                        <div class="btnWrapper">
+                            <button id="binary" data-to="2" class="btn">to Binary</button>
+                            <button id="octal" data-to="8" class="btn">to Octal</button>
+                            <button id="hex" data-to="16" class="btn">to Hex</button>
+                            <button id="decimal" data-to="10" class="btn">to Decimal</button>
+                        </div>
+                        
+                        <input type="text" id="result" class="input" disabled>
+                    </div>
+                `;
+                const css = `
+                    .wrapper { text-align: center; margin-top: 30px; }
+                    .btnWrapper {
+                        display: flex;
+                        height: 70px;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .btn {
+                        width: 60px;
+                        height: 40px;
+                        border-radius: 10px;
+                        margin: 0 5px;
+                        cursor: pointer;
+                    }
+                        .btn:hover {
+                            background-color: white;
+                            border-color: blue;
+                        }
+                    .input {
+                        width: 100px;
+                        height: 35px;
+                        border-radius: 5px;
+                        font-size: 20px;
+                        text-align: right;
+                    }
+                `;
+                document.getElementById("main").innerHTML = `
+                    ${html}
+                    <style>${css}</style>
+                `;
+            }
+
+            toDec(number, antilog, hexTable) {
+                return number.split("").reduce((acc, cur, index, arr) => {
+                    if (cur in hexTable) { cur = hexTable[cur] }
+                    return acc + (Number(cur) * antilog ** (arr.length - index - 1));
+                }, 0);
+            }
+
+            numberChanger(number, antilog, to) {
+                const hexTable = {
+                    "A": 10,
+                    "B": 11,
+                    "C": 12,
+                    "D": 13,
+                    "E": 14,
+                    "F": 15
+                };
+                let result = this.toDec(number, antilog, hexTable);
+
+                if (to !== 10) {
+                    let temp = result;
+                    result = "";
+                    while (temp > 0) {
+                        let digit = temp % to;
+                        if (to === 16 && digit>=10) {
+                            for (const key in hexTable) {
+                                if (hexTable[key] === digit) {
+                                    digit = key;
+                                }
+                            } 
+                        }
+                        result = `${digit}${result}`;
+                        temp = Math.floor(temp/to);
+                    }
+                }
+
+                return result;
+            }
+
+            control() {
+                const $ = (selector) => {
+                    const type = selector[0];
+                    const name = selector.substr(1, selector.length)
+                    const choicer = {
+                        "#": document.getElementById(name),
+                        ".": document.getElementsByClassName(name)
+                    };
+                    return choicer[type];
+                }
+
+                const buttonList = ["decimal", "octal", "hex", "binary"];
+                window.addEventListener("click", e => {
+                    if (buttonList.includes(e.target.id)) {
+                        const number = $("#number").value;
+                        const antilog = Number($("#antilog").value);
+
+                        $("#result").value = this.numberChanger(number, antilog, Number(e.target.dataset.to));
+                    }
+                });
+            }
+
+            run() {
+                this.init();
+                this.control();
+            }
+        }
+
+        const antilog = new Antilog("main");
+        antilog.run();
+    </script>
+</body>
+
+</html>

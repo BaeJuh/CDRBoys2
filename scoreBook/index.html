@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>성 적 표</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            color: #404040;
+        }
+    </style>
 </head>
 
 <body>
@@ -20,7 +27,6 @@
                 const res = await fetch("./scoreTable.json", { method: "GET" });
                 const { className, classNumber, studentList: students } = await res.json();
 
-                console.log(students)
                 this.initScreen(`${classNumber} ${className}`);
                 this.initCanvas(students);
                 this.initRanking(students);
@@ -30,16 +36,29 @@
                 const html = `
                     <h1 class="title">${title}</h1>
                     <div id="canvasArea" class="canvasArea"></div>
-                    <div id="rankingArea" class="rankingArea"></div>
+                    <div id="rankingArea" class="rankingArea">
+                        <h2>우리 반 엘리트들</h2>
+                    </div>
                 `;
 
                 const css = `
                     <style>
-                        * { margin: 0; padding:0; }
                         .main { text-align: center; width: 100%; }
                         .title { text-align: center; border-bottom: 2px dashed gray; padding: 10px;}
                         .canvasName { margin: 5px; }
-                        .canvas {border: 1px solid skyblue;}
+                        .canvas {border: 1px solid skyblue; border-radius: 10px;}
+                        .rankingArea {
+                            text-align: left;
+                            width: 460px;
+                            margin: 20px auto;
+                            border: 1px solid skyblue;
+                            border-radius: 10px;
+                            padding: 20px;
+                        }
+                            .ranking {
+                                font-size: 20px;
+                                font-weight: 700;
+                            }
                     </style>
                 `
 
@@ -55,22 +74,30 @@
                         this.pen = null;
 
                         this.yScale = 2.5;
-                        this.xScale = 80;
+                        this.xScale = 50;
                         this.blank = 30;
+
+                        this.subjectData = null;
+                    }
+
+                    setDataBySubject(subjectData) {
+                        this.subjectData = subjectData;
                     }
 
                     initCanvas() {
+                        const studentCount = this.getStudentsCount()
+                        const canvasWidth = studentCount > 9 ? 500 + (studentCount - 9) * 64 : 500;
+
                         const canvasName = document.createElement("h2");
                         canvasName.innerText = this.id;
                         canvasName.classList = "canvasName";
                         const canvas = document.createElement("canvas");
                         canvas.id = `canvas_${this.id}`;
                         canvas.className = `canvas`;
-                        canvas.width = 500;
+                        canvas.width = canvasWidth;
                         canvas.height = 300;
 
-                        document.getElementById("canvasArea").appendChild(canvasName);
-                        document.getElementById("canvasArea").appendChild(canvas);
+                        document.getElementById("canvasArea").append(canvasName, canvas);
 
                         this.canvas = canvas;
                         this.pen = canvas.getContext("2d");
@@ -81,41 +108,56 @@
                     }
 
                     printText(content, x, y) {
-                        this.pen.fillText(content, x, this.canvas.height - y);
+                        this.pen.font = "10px serif";
+                        this.pen.fillText(content, x, this.canvas.height - y + 5);
                     }
 
                     printCross() {
                         for (let x = 0; x < this.canvas.width; x++) {
                             this.printDot(x, 0);
                         }
-                        for (let y = 0; y < this.canvas.width; y++) {
+                        for (let y = 0; y < this.canvas.height; y++) {
                             this.printDot(0, y);
                         }
-                        for (let i = 1; i <= 10; i++) {
+                        for (let i = 1; i <= 10; i++) { // 0 10 20 ... 90 100
                             this.printText(i * 10, 5, (i * 10 * this.yScale) + this.blank + 2);
                         }
+                    }
+
+                    printGrid() {
+                        this.pen.fillStyle = "lightgray";
+                        for (let y = 1; y <= 10; y++) {
+                            for (let x = 1; x < this.canvas.width; x++) {
+                                this.printDot(x, y * 10 * this.yScale);
+                            }
+                        }
+                        this.pen.fillStyle = "black";
                     }
 
                     printStick(x, y, width, height) {
                         this.pen.fillRect(x + this.blank, this.canvas.height - (y + this.blank), width, height);
                     }
 
-                    drawCanvas(subjectData = []) {
+                    getStudentsCount() {
+                        return this.subjectData.reduce((acc) => acc + 1, 0);
+                    }
+
+                    drawCanvas() {
                         let total = 0;
-                        let count = 0;
-                        subjectData.forEach((subject, index) => {
+                        let count = this.getStudentsCount();
+                        this.subjectData.forEach((subject, index) => {
                             const { name, score } = subject;
                             const height = this.yScale * score;
-                            this.pen.fillStyle = "blue";
-                            this.printStick((index + 1) * this.xScale, height, 30, height);
+                            this.pen.fillStyle = "lightblue";
+
+                            const stickPos = ((this.canvas.width / (count + 1)) * (index + 1) - 30); // 30은 스틱 넓이
+                            this.printStick(stickPos, height, 30, height);
                             this.pen.fillStyle = "black";
-                            this.printText(name, ((index + 1) * this.xScale) + this.blank + 2, 13);
-                            count++;
+                            this.printText(name, stickPos + this.blank, 13);
                             total += score;
                         });
 
                         const avgScore = total / count;
-                        console.log(avgScore)
 
                         this.pen.fillStyle = "red";
                         for (let i = 0; i < this.canvas.width; i++) {
@@ -125,16 +167,18 @@
                     }
 
                     run(subjectData) {
-                        this.initCanvas();
-                        this.printCross();
-                        this.drawCanvas(subjectData);
+                        this.setDataBySubject(subjectData);
+                        this.initCanvas(); // 캔버스 요소 생성
+                        this.printCross(); // 좌표선 그리기
+                        this.printGrid(); // 보조선
+                        this.drawCanvas(); // 데이터 표시
                     }
                 }
 
                 const reOrganizeData = this.reOrganizeBySubject(students);
                 const canvasList = [];
                 for (const subject in reOrganizeData) {
-                    const canvas = new Canvas(subject);
+                    const canvas = new Canvas(subject); // id 는 과목명(한글)
                     canvas.run(reOrganizeData[subject]);
                     canvasList.push(canvas);
                 }
@@ -143,19 +187,18 @@
             initRanking(students) {
                 const avgMap = [];
                 students.forEach(student => {
-                    const { name, kor, eng, math } = student
-                    avgMap.push( [name, (Number(kor) + Number(eng) + Number(math))/3] );
+                    const { name, kor, eng, math } = student;
+                    avgMap.push([name, (Number(kor) + Number(eng) + Number(math))]);
                 });
 
                 const rankingMap = [...avgMap].sort((a, b) => { return b[1] - a[1] });
-                console.log(rankingMap);
 
-                rankingMap.forEach( (student, index) => {
-                    const [name, ] = student;
+                rankingMap.forEach((student, index) => {
+                    const [name,] = student;
                     document.getElementById("rankingArea").innerHTML += `
                         <p class="ranking">${index + 1}등 : ${name}</p>
                     `;
-                } );
+                });
             }
 
             reOrganizeBySubject(students) {
@@ -178,6 +221,16 @@
 
         const scoreBoard = new ScoreBoard("main");
         scoreBoard.initJSON();
+
+        /*
+            피드백 내용
+            Q : 평균을 구하거나 할 때 메서드로 빼는게 맞는건 알겠는데 이걸 전체 사이트의 객체가 가져야할지
+                캔버스 객체가 가져가야 할지 모르겠다.
+            A : 정보를 재구성 하는 과정이 있었다면(정보의 변형이 일어났다면) 재구성 된 정보는 캔버스의 속성이 될 수
+                있다. 이때 정보가 캔버스 객체의 속성이라면 메서드는 그곳에 위치 하는 것도 말이 된다.
+                하지만, 처음부터 정보를 재구성하는 과정을 거칠 때 내가 필요로 하는 값을 미리 연산해서 넣을 수 있는 등
+                정보를 재구성할 때 내가 필요로 하는 정보(시각화할 정보)가 뭔지 좀 더 깊게 고민하고 재구성해보자
+        */
     </script>
 </body>
 

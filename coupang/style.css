@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+.main {
+  width: 970px;
+  height: 500px;
+  border: 1px solid gray;
+  margin: auto; }
+  .main .floor {
+    width: 100%;
+    height: 50%; }
+    .main .floor .halfBox {
+      width: calc(50% - 8px);
+      height: 100%;
+      border: 1px solid gray;
+      margin: 2px;
+      float: left; }
+    .main .floor .quarterBox {
+      width: calc(25% - 16px);
+      height: 100%;
+      border: 1px solid gray;
+      margin: 2px;
+      float: left; }
+
+/*# sourceMappingURL=style.css.map */

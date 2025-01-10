@@ -43,17 +43,18 @@ class TelWeb {
                     padding-bottom: 5px;
                     border-bottom: 2px dashed #505050;
                 }
+                .telArea {width: 100%;}
                 .tag {
                     border: none;
                     outline: none;
                     background-color: transparent;
                     color: #101010;
-                    text-align: center;
                 }
                 .line {
-                    width: 80%;
+                    width: 90%;
+                    display: flex;
+                    justify-content: center;
                     margin: 5px auto;
-                    text-align: left;
                     height: 22px;
                 }
                 .cell {
@@ -155,7 +156,7 @@ class TelWeb {
         addEventListener("click", (e) => {
             if (e.target.id === "addBtn") {
                 console.log("추가")
-                const id = this.data.length + 1;
+                const id = String(this.data.length + 1);
                 const addName = document.getElementById("addName").value;
                 const addTel = document.getElementById("addTel").value;
                 const addAddr = document.getElementById("addAddr").value;

@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log - Extends</title>
+    <style>
+        * {margin: 0; padding: 0;}
+    </style>
 </head>
 
 <body>
@@ -39,14 +42,6 @@
 
             printText(content, x, y) {
                 this.pen.fillText(content, x, this.canvas.height - (y));
-            }
-
-            logDot(x, y) {
-                this.printDot(x, Math.log(y) / Math.log(2));
-            }
-
-            logScaleDot(x, y, base) {
-                this.printDot(x, Math.log(y) / Math.log(base));
             }
 
             drawForm() {
@@ -94,6 +89,7 @@
         class Exponent extends GraphDrawer {
             constructor(id) {
                 super(id);
+                this.yGap = 100;
             }
 
             textForm() {
@@ -101,7 +97,7 @@
                     super.printText((i / this.scale), i + this.blank - 2, 5);
                 }
                 for (let i = 0; i < this.canvas.height; i += this.scale) {
-                    super.printText((i / this.scale) * 100, 5, i + this.blank - 2);
+                    super.printText((i / this.scale) * this.yGap, 5, i + this.blank - 2);
                 }
             }
 
@@ -110,7 +106,7 @@
                 this.pen.fillStyle = "red";
                 for (let i = 0; i < this.canvas.width / this.scale; i += (1 / this.scale) / 5) {
                     // 2**i
-                    this.printDot(i, super.formula(i) / 100);
+                    this.printDot(i, super.formula(i) / this.yGap);
                 }
             }
 
@@ -123,6 +119,10 @@
         class ExponentLog extends GraphDrawer {
             constructor(id) {
                 super(id);
+            }
+
+            logDot(x, y) {
+                super.printDot(x, Math.log(y) / Math.log(2));
             }
 
             textScaleForm() {
@@ -141,7 +141,7 @@
 
                 for (let i = 0; i < this.canvas.width / this.scale; i += (1 / this.scale)) {
                     // 2**i
-                    super.logDot(i, super.formula(i));
+                    this.logDot(i, super.formula(i));
                 }
             }
 
@@ -154,6 +154,10 @@
         class ExponentLogScale extends GraphDrawer {
             constructor(id) {
                 super(id);
+            }
+
+            logScaleDot(x, y, base) {
+                super.printDot(x, Math.log(y) / Math.log(base));
             }
             
             textScaleForm(scale = 2) {
@@ -172,7 +176,7 @@
 
                 for (let i = 0; i < this.canvas.width / this.scale; i += (1 / this.scale)) {
                     // 2**i
-                    super.logScaleDot(i, super.formula(i), base);
+                    this.logScaleDot(i, super.formula(i), base);
                 }
             }
 
@@ -189,7 +193,7 @@
         exponentLog.run();
 
         const exponentLogScale = new ExponentLogScale("exponentLogScale");
-        exponentLogScale.run(5);
+        exponentLogScale.run(4);
     </script>
 </body>
 

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>각도쓰</title>
+
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        class DegreeOption {
+            constructor(id) {
+                this.id = id;
+            }
+
+            init() {
+                const html = `
+                    <input type="number" id="inputNumber">
+                    <select id="option">
+                        <option value="degree">각도</option>
+                        <option value="radian">라디안</option>
+                        <option value="mil">밀라디안</option>
+                    </select>
+                    <button id="getResult">변환</button>
+                    <div id="resultArea" class="resultArea">
+                        <p><label>각도 : </label><input id="degreeResult" readonly></p>
+                        <p><label>라디안 : </label><input id="radianResult" readonly></p>
+                        <p><label>밀라디안 : </label><input id="milResult" readonly></p>
+                    </div>
+                    <div id="canvasArea" class="canvasArea"></div>
+                `;
+                const css = `
+                    <style>
+                        * {margin: 0; padding: 0;}
+                    </style>
+                `;
+
+                document.getElementById(`${this.id}`).innerHTML = html;
+            }
+
+            degreeToRadian(degree) {
+                return ((degree * Math.PI) / 180) % (2*Math.PI);
+            }
+
+            degreeToMil(degree) {
+                return (6400 * (degree / 360)) % 6400;
+            }
+
+            radianToDegree(radian) {
+                return ((radian * 180) / Math.PI) % 360;
+            }
+
+            radianToMil(radian) {
+                return this.degreeToMil(this.radianToDegree(radian));
+            }
+
+            milToDegree(mil) {
+                return (360 * (mil / 6400)) % 360;
+            }
+
+            milToRadian(mil) {
+                return this.degreeToRadian(this.milToDegree(mil));
+            }
+
+            showResult(degree = 0, radian = 0, mil = 0) {
+                document.getElementById("degreeResult").value = degree;
+                document.getElementById("radianResult").value = radian;
+                document.getElementById("milResult").value = mil;
+            }
+
+            drawCanvas(inputNumber, option) {
+                class Canvas {
+                    constructor(id) {
+                        this.id = id;
+                        this.canvas = null;
+                        this.pen = null;
+
+                        this.scaleFactor = 10;
+                    }
+
+                    initCanvas() {
+                        const canvas = document.createElement("canvas");
+                        canvas.id = "canvas";
+                        canvas.class = "canvas";
+                        canvas.width = 500;
+                        canvas.height = 500;
+                        canvas.style.border = "1px solid skyblue";
+                        document.getElementById("canvasArea").innerHTML = "";
+                        document.getElementById("canvasArea").appendChild(canvas);
+
+
+                        this.canvas = canvas;
+                        this.pen = canvas.getContext("2d");
+                    }
+
+                    printDot(x, y) {
+                        this.pen.fillRect(this.canvas.width / 2 + x, this.canvas.height / 2 - y, 1, 1);
+                    }
+
+                    crossLine() {
+                        for (let i = 0; i < this.canvas.width; i++) {
+                            this.printDot(i, 0);
+                            this.printDot(-i, 0);
+                        }
+                        for (let i = 0; i < this.canvas.width; i++) {
+                            this.printDot(0, i);
+                            this.printDot(0, -i);
+                        }
+                    }
+
+                    drawDegree(inputNumber) {
+                        const radius = 200;
+                        for (let i = 0; i < inputNumber; i+=0.5) {
+                            const x = Math.cos((Math.PI * i) / 180);
+                            const y = Math.sin((Math.PI * i) / 180);
+
+                            this.printDot(x * radius, y * radius);
+                        }
+                        let [start, end] = [0, (Math.cos((Math.PI * inputNumber) / 180) * radius)];
+                        (start > end) && ([start, end] = [end, start]);
+                        for (let i = start; i < end; i++) {
+                            const f = (Math.sin((Math.PI * inputNumber) / 180) / Math.cos((Math.PI * inputNumber) / 180)) * i;
+                            this.printDot(i, f);
+                        }
+                    }
+
+                    run(inputNumber) {
+                        this.initCanvas();
+                        this.crossLine();
+                        this.drawDegree(inputNumber);
+                    }
+                }
+                switch (option) {
+                    case "radian":
+                        inputNumber = this.radianToDegree(inputNumber);
+                        break;
+                    case "mil":
+                        inputNumber = this.milToDegree(inputNumber);
+                        break;
+                }
+                const canvas = new Canvas(this.id);
+                canvas.run(inputNumber%360);
+            }
+
+            eventManager() {
+                addEventListener("click", (e) => {
+                    if (e.target.id === "getResult") {
+                        const inputNumber = Number(document.getElementById("inputNumber").value);
+                        const option = document.getElementById("option").value
+
+                        switch (option) {
+                            case "degree":
+                                this.showResult(inputNumber % 360, this.degreeToRadian(inputNumber), this.degreeToMil(inputNumber));
+                                break;
+                            case "radian":
+                                this.showResult(this.radianToDegree(inputNumber), inputNumber, this.radianToMil(inputNumber));
+                                break;
+                            case "mil":
+                                this.showResult(this.milToDegree(inputNumber), this.milToRadian(inputNumber), inputNumber % 6400);
+                                break;
+                        }
+                        this.drawCanvas(inputNumber, option);
+                    }
+                });
+            }
+
+            run() {
+                this.init();
+                this.eventManager();
+            }
+        }
+
+        const degreeOption = new DegreeOption("main")
+        degreeOption.run();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+    <style>
+        .main {
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="main"></div>
+    <script>
+        class Clock {
+            constructor(id) {
+                this.id = id;
+                this.timer = null;
+
+                this.canvas = null;
+                this.pen = null;
+            }
+            init() {
+                const clockCanvas = document.createElement("canvas");
+                clockCanvas.id = this.id;
+                clockCanvas.class = "canvas";
+                clockCanvas.width = 600;
+                clockCanvas.height = 600;
+
+                document.getElementById("main").appendChild(clockCanvas);
+            }
+
+            setCanvas() {
+                this.canvas = document.getElementById(`${this.id}`);
+                this.pen = this.canvas.getContext("2d");
+            }
+
+            printDot(x, y) {
+                const width = this.canvas.width;
+                const height = this.canvas.height;
+
+                this.pen.fillRect(width / 2 + x, height / 2 - y, 1, 1);
+            }
+
+            printText(x, y, text) {
+                const width = this.canvas.width;
+                const height = this.canvas.height;
+
+                this.pen.font = "20px serif";
+                this.pen.fillText(text, width / 2 + x, height / 2 - y, 20);
+            }
+
+            drawLine(dot1 = [0, 0], dot2 = [], len = 1) {
+                let [[x1, y1], [x2, y2]] = [dot1, dot2];
+                if (Math.floor(x1) === Math.floor(x2)) {
+                    (y1 > y2) && ([y1, y2] = [y2, y1])
+                    for (let y = y1; y < y2; y++) {
+                        this.printDot(0, y);
+                    }
+                } else {
+                    (x1 > x2) && ([[x1, y1], [x2, y2]] = [[x2, y2], [x1, y1]])
+                    for (let x = x1; x < x2; x++) {
+                        const y = ((y1 - y2) / (x1 - x2)) * (x - x1) + y1;
+                        this.printDot(x, y);
+                    }
+                }
+            }
+
+            drawCircle(radius) {
+                for (let i = 0; i < 360; i++) {
+                    const cos = Math.cos((Math.PI * i) / 180) * radius;
+                    const sin = Math.sin((Math.PI * i) / 180) * radius;
+                    this.printDot(cos, sin);
+                    if ( i%30 === 0 ) {
+                        const timeText = (((360 - i) + 90) % 360)/30;
+                        console.log(timeText)
+                        this.printText(cos, sin, `${timeText === 0 ? 12 : timeText}`);
+                    }
+                }
+            }
+
+            resetClock(len) {
+                this.pen.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.drawCircle(len);
+            }
+
+            correctionDegree(time, len) {
+                const clockDegree = ((360 - (time * 6)) + 90) % 360;
+                const cos = Math.round(Math.cos((Math.PI * clockDegree) / 180) * len);
+                const sin = Math.round(Math.sin((Math.PI * clockDegree) / 180) * len);
+                return [cos, sin]
+            }
+
+            setClock() {
+                this.clockShow();
+                this.timer = setInterval(() => {
+                    this.clockShow();
+                }, 1000);
+                // clearInterval(this.timer)
+            }
+
+            clockShow() {
+                const date = new Date();
+                const [hour, minute, second] = [date.getHours(), date.getMinutes(), date.getSeconds()];
+
+                this.resetClock(250);
+
+                this.pen.fillStyle = "black";
+                this.drawLine([0, 0], this.correctionDegree(hour * 5, 150));
+                this.pen.fillStyle = "blue";
+                this.drawLine([0, 0], this.correctionDegree(minute, 200));
+                this.pen.fillStyle = "red";
+                this.drawLine([0, 0], this.correctionDegree(second, 250));
+                this.pen.fillStyle = "black";
+            }
+
+            run() {
+                this.init();
+                this.setCanvas();
+                this.setClock();
+                console.log(this.correctionDegree(30, 1))
+            }
+        }
+
+        const clock = new Clock("clock");
+        clock.run();
+
+    </script>
+</body>
+
+</html>

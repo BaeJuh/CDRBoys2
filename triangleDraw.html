@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangle</title>
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        class Triangle {
+            constructor(id) {
+                this.id = id;
+            }
+
+            init() {
+                const html = `
+                    <div id="inputArea">
+                        <p><label for="height">h: </label><input type="number" id="height"></p>
+                        <p><label for="angleA">각 A: </label><input type="number" id="angleA"></p>
+                        <p><label for="angleB">각 B: </label><input type="number" id="angleB"></p>
+                        <button id="drawBtn">DRAW</button>
+                    </div>
+                    <div id="canvasArea"></div>
+                `;
+
+                const css = `
+                    <style>
+                        * { margin: 0; padding: 0; }
+                        .canvas { border: 1px solid skyblue; }
+                    </style>
+                `
+
+                document.getElementById("main").innerHTML = `${html + css}`;
+            }
+
+            degreeToRadian(degree) {
+                return (degree * Math.PI) / 180;
+            }
+
+            draw(height, angleA, angleB) {
+                class Canvas {
+                    constructor(id) {
+                        this.id = id;
+
+                        this.canvas = null;
+                        this.pen = null;
+                    }
+
+                    init() {
+                        const canvas = document.createElement("canvas");
+                        canvas.id = "canvas";
+                        canvas.className = "canvas";
+                        canvas.width = 500;
+                        canvas.height = 500;
+
+                        document.getElementById("canvasArea").innerHTML = "";
+                        document.getElementById("canvasArea").appendChild(canvas);
+
+                        this.canvas = canvas;
+                        this.pen = canvas.getContext("2d");
+                    }
+
+                    printDot(x, y) {
+                        this.pen.fillRect(x, this.canvas.height - y, 1, 1);
+                    }
+
+                    crossLine() {
+                        for (let i = 0; i < this.canvas.width; i++) {
+                            this.printDot(i, 0);
+                        }
+                        for (let i = 0; i < this.canvas.height; i++) {
+                            this.printDot(0, i);
+                        }
+                    }
+
+                    drawLine(dot1 = [0, 0], dot2 = []) {
+                        let [[x1, y1], [x2, y2]] = [dot1, dot2];
+
+                        (x1 > x2) && ([[x1, y1], [x2, y2]] = [[x2, y2], [x1, y1]]);
+
+                        for (let i = x1; i < x2; i++) {
+                            const f = ((y1 - y2) / (x1 - x2)) * (i - x1) + y1;
+                            this.printDot(i, f);
+                        }
+                        console.log([x1, y1], [x2, y2])
+                    }
+
+                    run() {
+                        this.init();
+                        this.crossLine();
+                    }
+                }
+                const canvas = new Canvas(this.id);
+                canvas.run();
+
+                const crossDot = this.getCrossPos(height, angleA, angleB);
+                canvas.drawLine([0, 0], crossDot);
+                canvas.drawLine([0, height], crossDot);
+            }
+
+            getCrossPos(height, A, B) {
+                const len = height * (Math.sin(this.degreeToRadian(A)) / Math.sin(this.degreeToRadian(180 - (A + B))));
+
+                const x = Math.cos(this.degreeToRadian(90 - B)) * len;
+                const y = Math.sin(this.degreeToRadian(90 - B)) * len;
+
+                console.log(len);
+
+                return [x, y];
+            }
+
+            eventManager() {
+                addEventListener("click", (e) => {
+                    if (e.target.id === "drawBtn") {
+                        const height = Number(document.getElementById("height").value);
+                        const angleA = Number(document.getElementById("angleA").value);
+                        const angleB = Number(document.getElementById("angleB").value);
+
+                        this.draw(height, angleA, angleB);
+                    }
+                });
+            }
+
+            run() {
+                this.init();
+                this.eventManager();
+            }
+        }
+
+        const triangle = new Triangle("main");
+        triangle.run();
+
+    </script>
+</body>
+
+</html>

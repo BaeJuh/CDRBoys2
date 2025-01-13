@@ -1,0 +1,65 @@
+* {margin: 0; padding: 0;}
+
+@mixin photo($url) {
+    background-image: url($url);
+    background-position: 50% 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.contentArea {
+    $width: 500px;
+    $height: 300px;
+    position: absolute;
+    width: $width;
+    height: $height;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    border-radius: 15px;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+.titleBox{
+        position: absolute;
+        h1 {
+            font: {
+                weight: 900;
+                size: 30px;
+            }
+            color: #0d0d0d;
+            background-color: white;
+            text-align: center;
+        }
+        width: 100px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+}
+    .image {
+        display: inline-block;
+        width: 33%;
+        height: 100%;
+    }
+
+    .photo1 {
+        @include photo("https://i.namu.wiki/i/P32eDFN2X6o60FxWmdIZJj3FZnFD1uXzhRw5kJXX2rC511WKRuohR6MBxwjEqSI7wNXpi5wD7H_L4gaf6yjq2A.webp")
+    }
+    .photo2 {
+        @include photo("https://api.nudge-community.com/attachments/8057848")
+    }
+    .photo3 {
+        @include photo("https://pbs.twimg.com/media/Gd156KxacAAQ67C?format=jpg&name=4096x4096")
+    }
+}

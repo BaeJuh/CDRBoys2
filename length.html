@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="main">
+    </div>
+
+    <script>
+        class Canvas {
+            constructor(id) {
+                this.id = id;
+
+                this.canvas = null;
+                this.pen = null;
+            }
+
+            init() {
+                const html = `
+                    <div id="inputArea">
+                        <p><label for="road1">거리1: </label><input type="number" id="road1"></p>
+                        <p><label for="road2">거리2: </label><input type="number" id="road2"></p>
+                        <p><label for="angle">끼인 각: </label><input type="number" id="angle"></p>
+                        <button id="drawBtn">DRAW</button>
+                    </div>
+                    <div id="canvasArea">
+                        <canvas id="canvas" class="canvas" width="300" height="300"></canvas>
+                    </div>
+                `;
+
+                const css = `
+                    <style>
+                        * { margin: 0; padding: 0; }
+                        .canvas { border: 1px solid skyblue; }
+                    </style>
+                `
+
+                document.getElementById("main").innerHTML = `${html + css}`;
+
+                this.canvas = document.getElementById("canvas");
+                this.pen = this.canvas.getContext("2d");
+            }
+
+            printDot(x, y) {
+                this.pen.fillRect(x, this.canvas.height - y, 1, 1);
+            }
+
+            crossLine() {
+                for (let i = 0; i < this.canvas.width; i++) {
+                    this.printDot(i, 0);
+                }
+                for (let i = 0; i < this.canvas.height; i++) {
+                    this.printDot(0, i);
+                }
+            }
+
+            drawLine(dot1 = [0, 0], dot2 = []) {
+                let [[x1, y1], [x2, y2]] = [dot1, dot2];
+
+                (x1 > x2) && ([[x1, y1], [x2, y2]] = [[x2, y2], [x1, y1]]);
+
+                for (let i = x1; i < x2; i++) {
+                    const f = ((y1 - y2) / (x1 - x2)) * (i - x1) + y1;
+                    this.printDot(i, f);
+                }
+                console.log([x1, y1], [x2, y2])
+            }
+
+            degToRad(deg) {
+                return (deg * Math.PI) / 180;
+            }
+
+            eventManager() {
+                addEventListener("click", (e) => {
+                    if (e.target.id === "drawBtn") {
+                        const road1 = Number(document.getElementById("road1").value);
+                        const road2 = Number(document.getElementById("road2").value);
+                        const angle = Number(document.getElementById("angle").value);
+
+
+                        const x = Math.cos(this.degToRad(90 - angle)) * road2;
+                        const y = Math.sin(this.degToRad(90 - angle)) * road2;
+
+                        this.drawLine([0, 0], [x, y]);
+                        this.drawLine([0, road1], [x, y]);
+                    }
+                });
+            }
+
+            run() {
+                this.init();
+                this.eventManager();
+            }
+        }
+
+        const canvas = new Canvas("main")
+        canvas.run()
+    </script>
+</body>
+
+</html>

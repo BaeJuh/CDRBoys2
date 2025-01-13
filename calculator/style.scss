@@ -1,0 +1,42 @@
+* {
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box;
+    font-family: "Cairo Play", serif;
+    font-optical-sizing: auto;
+}
+
+.main {
+    display: flex;
+    
+    margin: auto;
+}
+
+.calculatorArea {
+    .displayArea {
+    width: 240px;
+        .display {
+            width: 100%;
+            height: 20;
+        }
+    }
+
+
+    .inputArea {
+        $cell: 50px;
+        display: inline-block;
+        border: 1px solid red;
+
+        text-align: center;
+        width: ($cell+10)*4;
+
+        button {
+            width: $cell;
+            height: $cell;
+            line-height: $cell;
+            margin: 3px;
+            border: none;
+        }
+    }
+}
+

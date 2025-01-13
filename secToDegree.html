@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="number" id="second">
+    <p id="result"></p>
+    <script>
+        addEventListener("input", (e) => {
+            if (e.target.id === "second") {
+                document.getElementById("result").innerText = `
+                    ${(360 - ((Number(e.target.value) * 6) % 360) + 90)}
+                `;
+            }
+        });
+
+        
+
+    </script>
+</body>
+
+</html>

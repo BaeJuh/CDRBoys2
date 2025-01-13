@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag & Drop</title>
+    <style>
+        .item {
+            width: 100px;
+            height: 100px;
+            border: 1px solid skyblue;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 100px;
+            font-size: 40px;
+        }
+
+        .other {
+            margin-left: 300px;
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="item" class="item" draggable="true">
+            😶‍🌫️
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="other" class="item other" draggable="true">
+            
+        </div>
+    </div>
+
+    <script>
+        const item = document.getElementById("item");
+        // item.addEventListener("dragstart", (e) => {
+        //     console.log(e);
+        // });
+
+        // item.addEventListener("drag", (e) => {
+        //     console.log(e);
+        // });
+
+        // item.addEventListener("dragend", (e)=> {
+        //     console.log(e)
+        // });
+
+        // item.addEventListener("dragstart", (e) => {
+        //     console.log(e.dataTransfer);
+        // });
+
+        item.addEventListener("dragstart", (e) => {
+            const img = new Image();
+            img.src = "https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+
+            e.dataTransfer.setDragImage(img, 100, 100);
+        });
+
+        const other = document.getElementById("other");
+        // other.addEventListener("dragenter", (e) => {
+        //     console.log(e);
+        // });
+
+        // other.addEventListener("dragover", (e) => {
+        //     console.log(e);
+        // });
+
+        // other.addEventListener("dragleave", (e) => {
+        //     e.preventDefault();
+        //     console.log(e);
+        // });
+
+        // other.addEventListener("dragover", (e) => {e.preventDefault()});
+        // other.addEventListener("drop", (e) => {
+        //     e.preventDefault();
+        //     console.log(e);
+        // });
+
+        // other.ondrop = (e) => {
+        //     e.preventDefault();
+
+        //     console.log(e.dataTransfer?.files);
+        // }
+        // other.ondragover = (e) => {
+        //     e.preventDefault();
+        // }
+    </script>
+</body>
+</html>

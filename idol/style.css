@@ -1,0 +1,58 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+.contentArea {
+  position: absolute;
+  width: 500px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  border-radius: 15px;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  -ms-border-radius: 15px;
+  -o-border-radius: 15px; }
+  .contentArea .titleBox {
+    position: absolute;
+    width: 100px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%); }
+    .contentArea .titleBox h1 {
+      font-weight: 900;
+      font-size: 30px;
+      color: #0d0d0d;
+      background-color: white;
+      text-align: center; }
+  .contentArea .image {
+    display: inline-block;
+    width: 33%;
+    height: 100%; }
+  .contentArea .photo1 {
+    background-image: url("https://i.namu.wiki/i/P32eDFN2X6o60FxWmdIZJj3FZnFD1uXzhRw5kJXX2rC511WKRuohR6MBxwjEqSI7wNXpi5wD7H_L4gaf6yjq2A.webp");
+    background-position: 50% 50%;
+    background-size: cover;
+    background-repeat: no-repeat; }
+  .contentArea .photo2 {
+    background-image: url("https://api.nudge-community.com/attachments/8057848");
+    background-position: 50% 50%;
+    background-size: cover;
+    background-repeat: no-repeat; }
+  .contentArea .photo3 {
+    background-image: url("https://pbs.twimg.com/media/Gd156KxacAAQ67C?format=jpg&name=4096x4096");
+    background-position: 50% 50%;
+    background-size: cover;
+    background-repeat: no-repeat; }
+
+/*# sourceMappingURL=style.css.map */

@@ -41,24 +41,40 @@ class Queue {
     }
 
     push(data) {
-        const newNode = new DoublyLinkedList(this.length);
-        newNode.value = data;
-        if (this.first === null && this.last === null) { // 최초상태
-            newNode.setNext(null);
-            newNode.setPrev(null);
-            this.first = newNode;
-            this.last = newNode;
+        // const newNode = new DoublyLinkedList(this.length);
+        // newNode.value = data;
+        // if (this.first === null && this.last === null) { // 최초상태
+        //     newNode.setNext(null);
+        //     newNode.setPrev(null);
+        //     this.first = newNode;
+        //     this.last = newNode;
+        // }
+        // else {
+        //     this.last.setNext(newNode);
+        //     this.last = newNode;
+        //     this.last.setNext(null);
+        // }
+        // this.length++;
+
+        const iter = {
+            [Symbol.iterator]() {
+                const newNode = new DoublyLinkedList(this.length);
+                newNode.value = data;
+
+                return {
+                    next() {
+
+                        return {
+                            value: newNode,
+                        }
+                    }
+                }
+            }
         }
-        else {
-            this.last.setNext(newNode);
-            this.last = newNode;
-            this.last.setNext(null);
-        }
-        this.length++;
     }
 
     shift() {
-        if (this.first === null && this.last === null || false) {
+        if (this.first === null && this.last === null) {
             return null;
         } else {
             const result = this.first.value;

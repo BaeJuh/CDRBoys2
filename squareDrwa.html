@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEMO</title>
+</head>
+
+<body>
+    <div id="main"></div>
+    <script>
+        class Graph {
+            constructor(id) {
+                this.id = id;
+
+                this.canvas = null;
+                this.pen = null;
+
+                this.scale = 15;
+            }
+
+            init() {
+                const canvas = document.createElement("canvas");
+                [canvas.width, canvas.height] = [500, 500];
+                canvas.id = "canvas";
+                canvas.className = "canvas";
+                canvas.style = "border: 1px solid red";
+
+                document.getElementById("main").innerHTML += `
+                    <input id="x1" type="number">
+                    <input id="y1" type="number">
+                    <br>
+                    <input id="x2" type="number">
+                    <input id="y2" type="number">
+                    <button id="button">DRAW</button>
+                `;
+                document.getElementById("main").append(canvas);
+
+                this.canvas = canvas;
+                this.pen = canvas.getContext("2d");
+            }
+
+            printDot(x, y) {
+                this.pen.fillRect(this.canvas.width / 2 + (x * this.scale), this.canvas.height / 2 - (y * this.scale), 1, 1);
+            }
+
+            axis() {
+                for (let i = 0; i < this.canvas.width / 2; i += (1 / this.scale)) {
+                    this.printDot(i, 0);
+                    this.printDot(-i, 0);
+                }
+                for (let i = 0; i < this.canvas.height / 2; i += (1 / this.scale)) {
+                    this.printDot(0, i);
+                    this.printDot(0, -i);
+                }
+                for (let x = 1; x < this.canvas.width / this.scale; x++) {
+                    for (let j = 0; j < 5; j++) {
+                        this.printDot(x, j / (this.scale));
+                        this.printDot(x, -j / (this.scale));
+                        this.printDot(-x, j / (this.scale));
+                        this.printDot(-x, -j / (this.scale));
+                    }
+                }
+                for (let y = 1; y < this.canvas.width / this.scale; y++) {
+                    for (let j = 0; j < 5; j++) {
+                        this.printDot(j / (this.scale), y);
+                        this.printDot(-j / (this.scale), y);
+                        this.printDot(j / (this.scale), -y);
+                        this.printDot(-j / (this.scale), -y);
+                    }
+                }
+            }
+
+            setVertex() {
+                const x1 = Number(document.getElementById("x1").value);
+                const y1 = Number(document.getElementById("y1").value);
+                const x2 = Number(document.getElementById("x2").value);
+                const y2 = Number(document.getElementById("y2").value);
+
+                return [[x1, y1], [x1, y2], [x2, y2], [x2, y1]];
+            }
+
+            drawLine(start, to, type) {
+                let [[x1, y1], [x2, y2]] = [start, to];
+
+                (x1 > x2) && ([x1, y1] = [x2, y2]);
+
+                if (x1 === x2) {
+                    (y1 > y2) && ([y1, y2] = [y2, y1]);
+                    for (let i = y1; i < y2; i += (1 / this.scale)) {
+                        const [new_x, new_y] = this.multiply(type, [[x1], [i], [1]]);
+                        this.printDot(new_x, new_y);
+                    }
+                }
+                console.log(type)
+
+                for (let i = x1; i < x2; i += (1 / this.scale)) {
+                    const y = (y1 - y2) / (x1 - x2) * (i - x1) + y1;
+
+                    const [new_x, new_y] = this.multiply(type, [[i], [y], [1]]);
+
+                    this.printDot(new_x, new_y);
+                }
+            }
+
+            multiply(matrix1, matrix2) {
+                const result = [];
+
+                for (let i = 0; i < matrix1.length; i++) {
+                    result.push([]);
+                    for (let j = 0; j < matrix2[0].length; j++) {
+                        result[i].push(matrix1[i].reduce((acc, cur, index) => {
+                            return acc + (cur * matrix2[index][j]);
+                        }, 0));
+                    }
+                }
+                return result;
+            }
+
+
+            moveSquare() {
+                const [x, y] = [-10, -14];
+                const movingMatrix = [
+                    [1, 0, x],
+                    [0, 1, y],
+                    [0, 0, 1]
+                ];
+
+                return movingMatrix;
+            }
+
+            scaleSquare() {
+                const [x, y] = [2, 1.7];
+                const movingMatrix = [
+                    [x, 0, 0],
+                    [0, y, 0],
+                    [0, 0, 1]
+                ];
+
+                return movingMatrix;
+            }
+
+            rotateSquare(deg) {
+                const [cos, sin] = [
+                    Math.cos(Math.PI * deg / 180),
+                    Math.sin(Math.PI * deg / 180)
+                ]
+                const movingMatrix = [
+                    [cos, sin, 0],
+                    [-sin, cos, 0],
+                    [0, 0, 1]
+                ];
+
+                return movingMatrix;
+            }
+
+            drawSquare(vertexes, type = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]) {
+                const vertical = [...vertexes].sort((a, b) => a[0] - b[0]);
+                const horizon = [...vertexes].sort((a, b) => a[1] - b[1]);[];
+                console.log(type)
+                for (let i = 0; i < 4; i += 2) {
+                    this.drawLine(vertical[i], vertical[i + 1], type);
+                    this.drawLine(horizon[i], horizon[i + 1], type);
+                }
+            }
+
+            eventManager() {
+                document.getElementById("button").addEventListener("click", () => {
+                    const vertexes = this.setVertex();
+                    this.drawSquare(vertexes);
+                    this.pen.fillStyle = "red";
+                    this.drawSquare(vertexes, this.moveSquare());
+                    this.pen.fillStyle = "green";
+                    this.drawSquare(vertexes, this.scaleSquare());
+                    this.pen.fillStyle = "purple";
+                    this.drawSquare(vertexes, this.rotateSquare(45));
+                    this.pen.fillStyle = "black";
+                });
+            }
+
+            run() {
+                this.init();
+                this.axis();
+                this.eventManager();
+            }
+        }
+
+        const graph = new Graph("main");
+        graph.run();
+    </script>
+</body>
+
+</html>

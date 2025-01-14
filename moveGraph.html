@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Move</title>
+</head>
+
+<body>
+    <div id="main"></div>
+
+    <script>
+        class Graph {
+            constructor(id) {
+                this.id = id;
+
+                this.canvas = null;
+                this.pen = null;
+
+                this.scale = 30;
+            }
+
+            init() {
+                const canvas = document.createElement("canvas");
+                [canvas.width, canvas.height] = [500, 500];
+                canvas.id = "canvas";
+                canvas.className = "canvas";
+                canvas.style = "border: 1px solid red";
+
+                document.getElementById("main").appendChild(canvas);
+                this.canvas = canvas;
+                this.pen = canvas.getContext("2d");
+            }
+
+            printDot(x, y) {
+                this.pen.fillRect(this.canvas.width / 2 + (x * this.scale), this.canvas.height / 2 - (y * this.scale), 1, 1);
+            }
+
+            axis() {
+                for (let i = 0; i < this.canvas.width / 2; i+=(1/this.scale)) {
+                    this.printDot(i, 0);
+                    this.printDot(-i, 0);
+                }
+                for (let i = 0; i < this.canvas.height / 2; i+=(1/this.scale)) {
+                    this.printDot(0, i);
+                    this.printDot(0, -i);
+                }
+                for (let x = 1; x < this.canvas.width/this.scale; x++) {
+                    for (let j=0; j<5; j++) {
+                        this.printDot(x, j/(this.scale));
+                        this.printDot(x, -j/(this.scale));
+                        this.printDot(-x, j/(this.scale));
+                        this.printDot(-x, -j/(this.scale));
+                    }
+                }
+                for (let y = 1; y < this.canvas.width/this.scale; y++) {
+                    for (let j=0; j<5; j++) {
+                        this.printDot(j/(this.scale), y);
+                        this.printDot(-j/(this.scale), y);
+                        this.printDot(j/(this.scale), -y);
+                        this.printDot(-j/(this.scale), -y);
+                    }
+                }
+            }
+
+            f(x) {
+                return 3 * x + 4;
+            }
+
+            originGraph() {
+                for (let x = (-this.canvas.width / 2); x < this.canvas.width; x+=(1/this.scale)) {
+                    this.printDot(x, this.f(x));
+                }
+            }
+
+            mul(matrix1, matrix2) {
+                const result = [];
+                for (let i = 0; i < matrix1.length; i++) {
+                    result.push([]);
+                    for (let j = 0; j < matrix2[0].length; j++) {
+                        result[i].push(matrix1[i].reduce((acc, cur, index) => {
+                            return acc + (cur * matrix2[index][j]);
+                        }, 0));
+                    }
+                }
+
+                return result;
+            }
+
+            movedGraph(x = 0, y = 0) {
+                const matrix1 = [
+                    [1, 0, x],
+                    [0, 1, y],
+                    [0, 0, 1]
+                ];
+                this.pen.fillStyle = "red";
+                for (let x = (-this.canvas.width / 2); x < this.canvas.width; x+=(1/this.scale)) {
+                    const matrix2 = [
+                        [x], [this.f(x)], [1]
+                    ];
+                    const [[new_x], [new_y]] = this.mul(matrix1, matrix2);
+                    this.printDot(new_x, new_y);
+                }
+                this.pen.fillStyle = "black";
+            }
+
+            run() {
+                this.init();
+                this.axis();
+                this.originGraph();
+                this.movedGraph(3, -2);
+            }
+        }
+
+        const graph = new Graph("main");
+        graph.run();
+    </script>
+</body>
+
+</html>

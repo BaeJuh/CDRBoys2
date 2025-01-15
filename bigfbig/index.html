@@ -114,33 +114,18 @@
                 }
             }
 
-            setVertex() {
-                const x1 = Number(document.getElementById("x1").value);
-                const y1 = Number(document.getElementById("y1").value);
-                const x2 = Number(document.getElementById("x2").value);
-                const y2 = Number(document.getElementById("y2").value);
-
-                return [[x1, y1], [x1, y2], [x2, y2], [x2, y1]];
-            }
-
-            drawLine(start, to) {
-                let [[x1, y1], [x2, y2]] = [start, to];
-                console.log(start, to);
-                (x1 > x2) && ([x1, y1] = [x2, y2]);
-                console.log(start, to);
+            drawLine([x1, y1], [x2, y2]) {
+                // let [[x1, y1], [x2, y2]] = [start, to];
+                
+                (x1 > x2) && ([[x1, y1], [x2, y2]] = [[x2, y2], [x1, y1]]);
                 if (x1 === x2) {
                     (y1 > y2) && ([y1, y2] = [y2, y1]);
                     for (let i = y1; i < y2; i += (1 / this.scale)) {
                         this.printDot(x1, i);
                     }
-                } else if (y1 === y2) {
-                    for (let i = x1; i < x2; i += (1 / this.scale)) {
-                        this.printDot(i, y1);
-                    }
                 } else {
                     for (let i = x1; i < x2; i += (1 / this.scale)) {
                         const y = ((y1 - y2) / (x1 - x2)) * (i - x1) + y1;
-
                         this.printDot(i, y);
                     }
                 }
@@ -162,40 +147,52 @@
             }
 
 
-            moveSquare() {
-                const [x, y] = [-10, -14];
-                const movingMatrix = [
+            moveShape() {
+                const [x, y] = [2, 2];
+                return [
                     [1, 0, x],
                     [0, 1, y],
                     [0, 0, 1]
                 ];
-
-                return movingMatrix;
             }
 
-            scaleSquare() {
-                const [x, y] = [2, 1.7];
-                const movingMatrix = [
+            scaleShape() {
+                const [x, y] = [2, 2];
+                return [
                     [x, 0, 0],
                     [0, y, 0],
                     [0, 0, 1]
                 ];
-
-                return movingMatrix;
             }
 
-            rotateSquare(deg) {
+            rotateShape(deg) {
                 const [cos, sin] = [
                     Math.cos(Math.PI * deg / 180),
                     Math.sin(Math.PI * deg / 180)
-                ]
-                const movingMatrix = [
+                ];
+                return [
                     [cos, sin, 0],
                     [-sin, cos, 0],
                     [0, 0, 1]
                 ];
+            }
 
-                return movingMatrix;
+            oReflect() {
+                return [
+                    [-1, 0, 0], [0, -1, 0], [0, 0, 1]
+                ];
+            }
+
+            xReflect() {
+                return [
+                    [1, 0, 0], [0, -1, 0], [0, 0, 1]
+                ];
+            }
+
+            yReflect() {
+                return [
+                    [-1, 0, 0], [0, 1, 0], [0, 0, 1]
+                ];
             }
 
             drawTriangle(point1, point2, point3) {
@@ -204,52 +201,90 @@
                 this.drawLine(point1, point3);
             }
 
-            drawSquare(vertexes) {
+            drawSquare(point1, point2) {
+                const [[x1, y1], [x2, y2]] = [point1, point2];
+                const vertexes = [[x1, y1], [x2, y2], [x1, y2], [x2, y1]];
+
                 const vertical = [...vertexes].sort((a, b) => a[0] - b[0]);
-                const horizon = [...vertexes].sort((a, b) => a[1] - b[1]);[];
-                console.log(horizon)
+                const horizon = [...vertexes].sort((a, b) => a[1] - b[1]);
                 for (let i = 0; i < 4; i += 2) {
                     this.drawLine(vertical[i], vertical[i + 1]);
                     this.drawLine(horizon[i], horizon[i + 1]);
                 }
             }
 
-            drawButtonProcess(type) {
+            drawButtonProcess(type = null) {
                 const line_x1 = Number(document.getElementById("line_x1").value);
                 const line_y1 = Number(document.getElementById("line_y1").value);
                 const line_x2 = Number(document.getElementById("line_x2").value);
                 const line_y2 = Number(document.getElementById("line_y2").value);
-
-                this.drawLine([line_x1, line_y1], [line_x2, line_y2]);
-
+                // [[], []]
                 const triangle_x1 = Number(document.getElementById("triangle_x1").value);
                 const triangle_y1 = Number(document.getElementById("triangle_y1").value);
                 const triangle_x2 = Number(document.getElementById("triangle_x2").value);
                 const triangle_y2 = Number(document.getElementById("triangle_y2").value);
                 const triangle_x3 = Number(document.getElementById("triangle_x3").value);
                 const triangle_y3 = Number(document.getElementById("triangle_y3").value);
-
-                this.drawTriangle([triangle_x1, triangle_y1], [triangle_x2, triangle_y2], [triangle_x3, triangle_y3]);
-
+                // [[], [], []]
                 const square_x1 = Number(document.getElementById("square_x1").value);
                 const square_y1 = Number(document.getElementById("square_y1").value);
                 const square_x2 = Number(document.getElementById("square_x2").value);
                 const square_y2 = Number(document.getElementById("square_y2").value);
+                // [[], []]
 
-                this.drawSquare([[square_x1, square_y1], [square_x2, square_y2], [square_x1, square_y2], [square_x2, square_y1]]);
+                const posSet = {
+                    "line": [[line_x1, line_y1], [line_x2, line_y2]],
+                    "triangle": [[triangle_x1, triangle_y1], [triangle_x2, triangle_y2], [triangle_x3, triangle_y3]],
+                    "square": [[square_x1, square_y1], [square_x2, square_y2]]
+                };
+
+                if (type !== null) {
+                    for (const shape in posSet) {
+                        posSet[shape] = posSet[shape].map((pos) => {
+                            const [x, y] = pos;
+                            const [[new_x], [new_y]] = this.multiply(type, [[x], [y], [1]]);
+                            return [new_x, new_y];
+                        });
+                    }
+                }
+
+                console.log(posSet)
+
+                this.drawLine(...posSet["line"]);
+                this.drawTriangle(...posSet["triangle"]);
+                this.drawSquare(...posSet["square"]);
+
+                // this.drawLine([line_x1, line_y1], [line_x2, line_y2]);
+                // this.drawTriangle([[triangle_x1, triangle_y1], [triangle_x2, triangle_y2], [triangle_x3, triangle_y3]]);
+                // this.drawSquare([[square_x1, square_y1], [square_x2, square_y2], [square_x1, square_y2], [square_x2, square_y1]]);
             }
 
             eventManager() {
                 const buttonList = ["drawButton", "move", "scale", "rotate", "x_reflect", "y_reflect", "o_reflect"];
                 addEventListener("click", (e) => {
                     if (buttonList.includes(e.target.id)) {
-                        let type = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+                        let type = null;
                         switch (e.target.id) {
-                            case "drawButton":
-
+                            case "move":
+                                type = this.moveShape();
+                                break;
+                            case "scale":
+                                type = this.scaleShape();
+                                break;
+                            case "rotate":
+                                type = this.rotateShape(45);
+                                break;
+                            case "x_reflect":
+                                type = this.xReflect();
+                                break;
+                            case "y_reflect":
+                                type = this.yReflect();
+                                break;
+                            case "o_reflect":
+                                type = this.oReflect();
                                 break;
                         }
-                        this.drawButtonProcess();
+                        this.drawButtonProcess(type);
                     }
                 })
             }

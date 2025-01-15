@@ -4,6 +4,10 @@ interface Todo {
     completed: boolean;
 }
 
+interface SquareFunc {
+    (num: number): number;
+}
+
 let todos: Todo[] = [];
 
 const addTodo = (todo: Todo) => {
@@ -15,5 +19,12 @@ const newTodos: Todo = {
     content: "typescript",
     completed: false
 };
+
 addTodo(newTodos);
 console.log(todos);
+
+const squareFunc = (num: number) => {
+    return num * num;
+}
+
+console.log(squareFunc(10));

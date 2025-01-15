@@ -10,3 +10,7 @@ const newTodos = {
 };
 addTodo(newTodos);
 console.log(todos);
+const squareFunc = (num) => {
+    return num * num;
+};
+console.log(squareFunc(10));

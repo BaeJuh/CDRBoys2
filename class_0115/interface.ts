@@ -5,7 +5,7 @@ interface Todo {
 }
 
 interface SquareFunc {
-    (num: number): number;
+    num: (num: number) => number;
 }
 
 let todos: Todo[] = [];

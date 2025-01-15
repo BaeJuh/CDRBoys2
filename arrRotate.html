@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const str = "ABC";
+
+        const shuffle = (str) => {
+            // 배열 돌리기
+            const arr = str.split("");
+            const matrix = [];
+
+            for (let i = 0; i < arr.length; i++) {
+                matrix[i] = [...arr];
+                const char = arr.shift()
+                arr.push(char)
+            }
+
+            /* 
+            ['A', 'B', 'C']
+            ['B', 'C', 'A']
+            ['C', 'A', 'B']
+            */
+
+// -------------------------------------------------
+            // 문자열 조합
+            const result = [];
+            const traveler = (temp = "", len) => {
+                if (temp.length === len) {
+                    console.log(temp);
+                    result.push(temp);
+                }
+                else {
+                    for (let i = 0; i < len; i++) {
+                        const c = matrix[temp.length][i];
+                        if (temp.indexOf(c) === -1) {
+                            traveler(temp + c, len);
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            traveler("", matrix.length);
+
+            console.log(result.length)
+        }
+
+        shuffle(str);
+    </script>
+</body>
+
+</html>

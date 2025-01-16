@@ -1,0 +1,40 @@
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main {
+    width: 100%;
+
+    .title {
+        text-align: center;
+    }
+
+    .buttonArea {
+        width: 50%;
+        border: 1px solid red;
+    }
+
+    .boxLine {
+        width: 100%;
+        @include flex-center;
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+        }
+
+        .false {
+            border: 2px solid black;
+        }
+        .true {
+            background-color: green;
+        }
+    }
+}

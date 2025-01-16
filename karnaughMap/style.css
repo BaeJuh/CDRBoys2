@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main {
+  width: 100%;
+}
+.main .title {
+  text-align: center;
+}
+.main .buttonArea {
+  width: 50%;
+  border: 1px solid red;
+}
+.main .boxLine {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main .boxLine .box {
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+}
+.main .boxLine .false {
+  border: 2px solid black;
+}
+.main .boxLine .true {
+  background-color: green;
+}/*# sourceMappingURL=style.css.map */

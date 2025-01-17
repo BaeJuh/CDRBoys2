@@ -62,7 +62,9 @@ class App {
 
         this.app.get("/option", (req, res) => {
             const { select } = req.query;
-            res.send(select)
+            const nameList = ["Bae", "Ju", "Hwan"];
+
+            res.send(nameList[Number(select)]);
         });
     }
 

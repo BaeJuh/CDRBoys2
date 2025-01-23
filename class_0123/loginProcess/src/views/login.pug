@@ -1,0 +1,18 @@
+doctype html
+html(lang="ko")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Login
+    body 
+        h1 Login
+        form(method="POST", action="/login")
+            #inputArea
+                label(for="id") ID: 
+                input#id(name="id" placeholder="id")
+                br
+                label(for="pw") PW: 
+                input#pw(name="pw" placeholder="password")
+                br
+                button#loginButton(type="submit") Login
+        script(src="scripts/login.js")

@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const writeStream = fs.createWriteStream("./writeme2.txt");
+const writeStream = fs.createWriteStream("./writeme2.txt", {highWaterMark: 1});
 writeStream.on("finish", () => {
     console.log("finish");
 });

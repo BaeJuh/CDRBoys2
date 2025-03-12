@@ -5,23 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @Entity
-@Getter
-@Setter
-public class Article {
+public class Account {
     @Id
     @GeneratedValue
-    private long id;
+    private Long primaryKey;
 
     @Column
-    private String title;
-
+    private String id;
     @Column
-    private String content;
+    private String pw;
 }

@@ -5,6 +5,7 @@ import com.example.practice.entity.Article;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ class ArticleServiceTest {
     }
 
     @Test
+    @Transactional
     void create_Success() {
         // expectation
         String title = "라라라라";
@@ -69,6 +71,7 @@ class ArticleServiceTest {
     }
 
     @Test
+    @Transactional
     void create_Failure() {
         // expectation
         String title = "라라라라";

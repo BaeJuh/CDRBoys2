@@ -44,15 +44,14 @@ public class loginController {
     public String join(LoginProcess new_Account) {
         Account new_User = new_Account.toEntity();
         Account saved = this.accountRepository.save(new_User);
-        
+
         return "";
     }
 
 
     @GetMapping("/manage")
     public String manage() {
-
-
+        
         return "";
     }
 

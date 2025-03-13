@@ -1,5 +1,6 @@
 package com.example.practice.api;
 
+import com.example.practice.dto.ArticleForm;
 import com.example.practice.entity.Account;
 import com.example.practice.entity.Article;
 import com.example.practice.repository.ArticleRepository;
@@ -30,41 +31,32 @@ public class ArticleApiController {
     }
 
     // Post
-//    @PostMapping("/api/articles")
-//    public ResponseEntity<Article> create(@RequestBody ArticleForm dto) {
-//        Article created = articleService.create(dto);
-//        return (created != null) ? ResponseEntity.status(200).build() : ResponseEntity.status(400).build();
-//    } // 일단 이렇게 한다. 값 넘김이 발생하기 때문에 "dto"가 받아야함
+    @PostMapping("/api/articles")
+    public ResponseEntity<Article> create(@RequestBody ArticleForm dto) {
+        Article created = articleService.create(dto);
+        return (created != null) ? ResponseEntity.status(200).build() : ResponseEntity.status(400).build();
+    } // 일단 이렇게 한다. 값 넘김이 발생하기 때문에 "dto"가 받아야함
 
-    // Update
+//     Update
     @PatchMapping("/api/articles/{id}")
     public ResponseEntity<Article> update(@PathVariable Long id, @RequestBody ArticleForm dto) {
-        // 수정용 엔티티 생성
-        Article article = dto.toEntity();
-        log.info("id: {}, article: {}" + article.toString());
-        // 대상 엔티티 조회
-        Article target = articleRepository.findById(id).orElse(null);
-        // 잘못된 요청 처리
-        if (target == null || id != article.getId()) {
-            log.info("id: {}, article: {}" + article.toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        // 업데이트 (응답 200)
-        target.patch(article);
-        Article update = articleRepository.save(target);
-        return ResponseEntity.status(HttpStatus.OK).body(update);
+        Article updated = articleService.update(id, dto);
+        return (updated != null) ? ResponseEntity.status(HttpStatus.OK).body(updated) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     } // "dto"를 받아 "Entity"로 변환해 사용
 
     // Delete
-//    @DeleteMapping("api/article/{id}")
-//    public ResponseEntity<Article> delete(@PathVariable Long id) {
-//        Article target = articleRepository.findById(id).orElse(null);
-//
-//        if (target == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
-//
-//        articleRepository.delete(target);
-//        return ResponseEntity.status(HttpStatus.OK).build();
-//    }
+    @DeleteMapping("api/article/{id}")
+    public ResponseEntity<Article> delete(@PathVariable Long id) {
+        Article deleted = articleService.delete(id);
+        return (deleted != null) ? ResponseEntity.status(HttpStatus.OK).build() : ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    // 트랜잭션 -> 실패 -> 롤백
+    @PostMapping("/api/transaction-test")
+    public ResponseEntity<List<Article>> transactionTest(@RequestBody List<ArticleForm> dtos) {
+        List<Article> createdList = articleService.createArticles(dtos);
+        return (createdList != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(createdList) :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 }

@@ -44,4 +44,10 @@ public class Route {
 
         return loggedInUser != null ? loggedInUser.getName() : null;
     }
+
+    @PutMapping("/change")
+    public String change() {
+        
+        return "";
+    }
 }

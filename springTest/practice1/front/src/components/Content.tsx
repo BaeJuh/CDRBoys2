@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useState } from "react";
 import Join from "./Join";
 import Login from "./Login";
 import User from "./User";
+import ChangePw from "./ChangePw";
 
 interface Content {
     mode: string;
@@ -22,8 +23,11 @@ const Content: React.FC<Content> = ({ mode, setMode }) => {
             case "login":
                 setContent(<Login setMode={setMode} />);
                 break;
+            case "changePw":
+                setContent(<ChangePw setMode={setMode}/>);
+                break;
             default:
-                setContent(<User userName={mode}/>);
+                setContent(<User userName={mode} setMode={setMode}/>);
                 break;
         }
     }, [mode]);

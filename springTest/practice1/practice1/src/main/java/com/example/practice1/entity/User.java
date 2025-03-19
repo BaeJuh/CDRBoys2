@@ -19,4 +19,6 @@ public class User {
     private String userId;
     @Column
     private String userPw;
+
+    public User() {}
 }

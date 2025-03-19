@@ -11,7 +11,7 @@ const Main = () => {
                 <li><button onClick={() => { setMode("login") }}>Sign In</button></li>
             </nav>
             <div>
-                <Content mode={mode} />
+                <Content mode={mode} setMode={setMode} />
             </div>
         </>
     );

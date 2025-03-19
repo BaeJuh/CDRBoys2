@@ -1,22 +1,20 @@
 import { useState } from "react";
 
+interface Join {
+    setMode: React.Dispatch<React.SetStateAction<string>>;
+}
+
 interface UserInfo {
     name: string;
     userId: string;
     userPw: string;
 }
 
-const Join = () => {
+const Join: React.FC<Join> = ({ setMode }) => {
     const [userInfo, setUserInfo] = useState<UserInfo>({ "name": "", "userId": "", "userPw": "" });
     const [warning, setWarning] = useState<string>("");
 
     const joinUs = async (): Promise<void> => {
-        for (const [, info] of Object.entries(userInfo)) {
-            if (info === "") {
-                return;
-            }
-        }
-
         try {
             const response = await fetch("http://localhost:8080/join", {
                 method: "POST",
@@ -25,7 +23,13 @@ const Join = () => {
                 },
                 body: JSON.stringify(userInfo),
             });
-            setWarning(response.ok ? "" : "이미 있는 ID 입니다.");
+
+            if (response.ok) {
+                alert("가입이 완료되었습니다.");
+                setMode("login");
+            } else {
+                setWarning("이미 있는 ID 입니다.");
+            }
         }
         catch (err) {
             console.log(err);
@@ -49,6 +53,7 @@ const Join = () => {
                 <br></br>
                 <label>ID : <input type="text" name="userId" value={userInfo["userId"]} onChange={(e) => {
                     changeHandler(e);
+                    setWarning("");
                 }}></input></label>
                 <span style={{ color: "tomato" }}>{warning}</span>
                 <br></br>

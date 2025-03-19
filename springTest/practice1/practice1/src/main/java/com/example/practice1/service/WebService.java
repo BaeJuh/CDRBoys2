@@ -1,5 +1,6 @@
 package com.example.practice1.service;
 
+import com.example.practice1.dto.LoginDto;
 import com.example.practice1.dto.UserDto;
 import com.example.practice1.entity.User;
 import com.example.practice1.repository.UserRepository;
@@ -20,10 +21,18 @@ public class WebService {
 
     public User join(UserDto userDto) {
         // userId에 중복 없이
-//        System.out.println(userDto);
         if (userDto == null || userRepository.existsByUserId(userDto.getUserId())) {
             return null;
         }
         return userRepository.save(userDto.toEntity());
+    }
+
+    public User login(LoginDto loginDto) {
+        User loggedUser = userRepository.findByUserId(loginDto.getUserId());
+
+        if (loggedUser != null && loggedUser.getUserPw().equals(loginDto.getUserPw())) {
+            return loggedUser;
+        }
+        return null;
     }
 }

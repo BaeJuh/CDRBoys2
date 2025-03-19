@@ -1,5 +1,6 @@
 package com.example.practice1.route;
 
+import com.example.practice1.dto.LoginDto;
 import com.example.practice1.dto.UserDto;
 import com.example.practice1.entity.User;
 import com.example.practice1.service.WebService;
@@ -32,12 +33,15 @@ public class Route {
     public ResponseEntity<User> join(@RequestBody UserDto userInfo) {
 //        System.out.println(userInfo);
         User newUser = webService.join(userInfo);
-        System.out.println(newUser);
+//        System.out.println(newUser);
         return newUser != null ? ResponseEntity.ok(newUser) : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody UserDto userInfo) {
-        
+    @CrossOrigin(origins = "*")
+    public String login(@RequestBody LoginDto loginInfo) {
+        User loggedInUser = webService.login(loginInfo);
+
+        return loggedInUser != null ? loggedInUser.getName() : null;
     }
 }

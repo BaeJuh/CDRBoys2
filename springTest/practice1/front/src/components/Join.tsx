@@ -8,6 +8,7 @@ interface UserInfo {
 
 const Join = () => {
     const [userInfo, setUserInfo] = useState<UserInfo>({ "name": "", "userId": "", "userPw": "" });
+    const [warning, setWarning] = useState<string>("");
 
     const joinUs = async (): Promise<void> => {
         for (const [, info] of Object.entries(userInfo)) {
@@ -16,13 +17,19 @@ const Join = () => {
             }
         }
 
-        fetch("http://localhost:8080/join", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userInfo),
-        });
+        try {
+            const response = await fetch("http://localhost:8080/join", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userInfo),
+            });
+            setWarning(response.ok ? "" : "이미 있는 ID 입니다.");
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -43,15 +50,16 @@ const Join = () => {
                 <label>ID : <input type="text" name="userId" value={userInfo["userId"]} onChange={(e) => {
                     changeHandler(e);
                 }}></input></label>
+                <span style={{ color: "tomato" }}>{warning}</span>
                 <br></br>
-                <label>PW : <input type="text" name="userPw" value={userInfo["userPw"]} onChange={(e) => {
+                <label>PW : <input type="password" name="userPw" value={userInfo["userPw"]} onChange={(e) => {
                     changeHandler(e);
                 }}></input></label>
                 <br></br>
                 <button type="submit" onClick={(e) => {
                     e.preventDefault();
                     joinUs();
-                }} disabled={Object.entries(userInfo).some(([, info]) => info === "")}>JOIN US</button>
+                }} disabled={warning !== "" || Object.entries(userInfo).some(([, info]) => info === "")}>JOIN US</button>
             </form>
         </>
     );

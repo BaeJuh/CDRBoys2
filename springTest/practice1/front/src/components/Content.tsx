@@ -22,13 +22,13 @@ const Content: React.FC<Content> = ({ mode, setMode }) => {
                 setContent(<Join setMode={setMode} />);
                 break;
             case "login":
-                setContent(<Login setMode={setMode} setUserId={setUserId}/>);
+                setContent(<Login setMode={setMode} setUserId={setUserId} />);
                 break;
             case "changePw":
-                setContent(<ChangePw userId={userId} setMode={setMode}/>);
+                setContent(<ChangePw userId={userId} setMode={setMode} />);
                 break;
             default:
-                setContent(<User userName={mode} setMode={setMode}/>);
+                setContent(<User userName={mode} setMode={setMode} />);
                 break;
         }
     }, [mode]);

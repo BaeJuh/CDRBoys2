@@ -9,7 +9,7 @@ const User: React.FC<User> = ({ userName, setMode }) => {
             <h1>Welcome to {userName}</h1>
             <button onClick={() => {
                 setMode("changePw");
-            }}>Change Your Information</button>
+            }}>Change Your Password</button>
         </>
     );
 }

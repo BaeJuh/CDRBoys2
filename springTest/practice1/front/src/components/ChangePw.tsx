@@ -21,7 +21,16 @@ const ChangePw: React.FC<ChangePw> = () => {
         });
     }
     const changePassword = async (): Promise<void> => {
-        
+        // fetch
+        const response = await fetch("http://localhost:8080/change", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(changingInfo),
+        });
+
+        console.log(await response);
     }
     return (
         <>
@@ -33,7 +42,9 @@ const ChangePw: React.FC<ChangePw> = () => {
                 <br></br>
                 <label>new Password : <input type="text" name="newUserPw" value={changingInfo["newUserPw"]} onChange={(e) => { changeHandler(e); }}></input></label>
                 <br></br>
-                <button onClick={(e) => { }}>Change Password</button>
+                <button onClick={() => {
+                    changePassword();
+                }} disabled={Object.entries(changingInfo).some(([, info]) => info === "")}>Change Password</button>
             </div>
         </>
     );

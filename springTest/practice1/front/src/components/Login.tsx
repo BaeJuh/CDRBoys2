@@ -2,6 +2,7 @@ import { useState } from "react";
 
 interface Login {
     setMode: React.Dispatch<React.SetStateAction<string>>;
+    setUserId: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface LoginInfo {
@@ -9,7 +10,7 @@ interface LoginInfo {
     "userPw": string;
 }
 
-const Login: React.FC<Login> = ({ setMode }) => {
+const Login: React.FC<Login> = ({ setMode, setUserId }) => {
     const [loginInfo, setLoginInfo] = useState<LoginInfo>({ "userId": "", "userPw": "" });
 
     const login = async (): Promise<void> => {
@@ -25,6 +26,7 @@ const Login: React.FC<Login> = ({ setMode }) => {
             const userName = await response.text();
             if (userName) {
                 setMode(userName);
+                setUserId(loginInfo["userId"]);
             } else {
                 setLoginInfo((prev) => { return { ...prev, userPw: "" } });
             }

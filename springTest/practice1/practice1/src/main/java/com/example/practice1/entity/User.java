@@ -21,4 +21,8 @@ public class User {
     private String userPw;
 
     public User() {}
+
+    public void changePassword(String newUserPw) {
+        this.userPw = newUserPw;
+    }
 }

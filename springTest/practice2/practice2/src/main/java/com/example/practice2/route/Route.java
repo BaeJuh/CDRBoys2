@@ -3,10 +3,7 @@ package com.example.practice2.route;
 import com.example.practice2.dto.ProductDto;
 import com.example.practice2.service.WebService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,5 +31,17 @@ public class Route {
     @CrossOrigin(origins = "*")
     public ProductDto product(@PathVariable String id) {
         return webService.callProduct(id);
+    }
+
+    @GetMapping("/login")
+    @CrossOrigin(origins = "*")
+    public String login() {
+        return "";
+    }
+
+    @PostMapping("/join")
+    @CrossOrigin(origins = "*")
+    public String join() {
+        return "";
     }
 }

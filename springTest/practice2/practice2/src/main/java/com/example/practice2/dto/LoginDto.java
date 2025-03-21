@@ -5,14 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Getter
-public class UserDto extends LoginDto {
-    private Long id;
-
-    public UserDto(Long id, String userId, String userPw) {
-        super(userId, userPw);
-        this.id = id;
-    }
+public class LoginDto {
+    private String userId;
+    private String userPw;
 }

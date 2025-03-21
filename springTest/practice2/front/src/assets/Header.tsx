@@ -4,7 +4,7 @@ const Header = () => {
     const navigate = useNavigate();
     return (
         <>
-            <h1>Some Site</h1>
+            <h1 onClick={() => { navigate("/") }}>Some Site</h1>
             <nav>
                 <li><button id={"products"} onClick={() => { navigate("/products") }}>Products</button></li>
                 <li><button>Menu 2</button></li>

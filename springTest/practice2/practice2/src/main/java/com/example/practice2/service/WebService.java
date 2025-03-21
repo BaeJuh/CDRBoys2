@@ -15,7 +15,12 @@ public class WebService {
     @Autowired
     ApiService apiService;
 
-    public List<ProductDto> callApi() {
+    public List<ProductDto> callProducts() {
         return apiService.fetchProducts();
+    }
+
+    public ProductDto callProduct(String id) {
+        ProductDto data = apiService.fetchProduct(id);
+        return apiService.fetchProduct(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.practice2.service;
 
+import com.example.practice2.dto.ProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,7 @@ public class WebService {
     @Autowired
     ApiService apiService;
 
-    public String callApi() {
-//        Flux<String> data = apiService.fetchData();
-//        data.subscribe(res -> Map<String, String> data = res);
-//        return "api";
-        Flux<String> data = apiService.fetchData();
-        String result = data.blockLast(); // Flux의 마지막 요소를 가져옴 (동기)
-
-        return result;
+    public List<ProductDto> callApi() {
+        return apiService.fetchProducts();
     }
 }

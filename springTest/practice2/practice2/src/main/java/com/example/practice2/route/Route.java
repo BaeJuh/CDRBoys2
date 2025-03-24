@@ -1,10 +1,15 @@
 package com.example.practice2.route;
 
+import com.example.practice2.dto.LoginDto;
 import com.example.practice2.dto.ProductDto;
+import com.example.practice2.dto.UserDto;
+import com.example.practice2.entity.User;
 import com.example.practice2.service.WebService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +38,11 @@ public class Route {
         return webService.callProduct(id);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @CrossOrigin(origins = "*")
-    public String login() {
-        return "";
+    public ResponseEntity<User> login(LoginDto loginDto) {
+        User user = webService.login(loginDto);
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/join")

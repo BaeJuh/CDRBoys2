@@ -1,5 +1,6 @@
 package com.example.practice2.service;
 
+import com.example.practice2.dto.LoginDto;
 import com.example.practice2.dto.ProductDto;
 import com.example.practice2.dto.UserDto;
 import com.example.practice2.entity.User;
@@ -29,13 +30,21 @@ public class WebService {
         return apiService.fetchProduct(id);
     }
 
-    public User login(UserDto userDto) {
+    public User login(LoginDto loginDto) {
+        User user = userRepository.findByUserId(loginDto.getUserId());
+
+        if (user != null && user.getUserPw().equals(loginDto.getUserPw())) {
+            return user;
+        }
 
         return null;
     }
 
     public User join(UserDto userDto) {
-
-        return null;
+        if (userRepository.existsByUserId(userDto.getUserId())) {
+            return null;
+        }
+        User user = userDto.toEntity();
+        return userRepository.save(user);
     }
 }

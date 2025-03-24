@@ -4,6 +4,7 @@ import Content from './assets/Content';
 import Header from './assets/Header';
 import Product from './assets/Product';
 import Products from './assets/Products';
+import Login from './assets/Login';
 
 function App() {
   const [content, setContent] = useState<string>("");
@@ -14,6 +15,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Content content={content} />}></Route>
+          <Route path="/login" element={<Login />}></Route>
           <Route path="/products" element={<Products />}></Route>
           <Route path="/products/:id" element={<Product />}></Route>
         </Routes>

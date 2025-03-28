@@ -1,5 +1,6 @@
 package com.example.practice.entity;
 
+import com.example.practice.dto.CommentDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,4 +27,14 @@ public class Comment {
 
     @Column
     private String body;
+
+    public static Comment createComment(CommentDto dto, Article article) {
+        if (dto.getId() != null) {
+            throw new IllegalArgumentException("댓글 중복");
+        }
+        if (dto.getArticleId() != article.getId()) {
+    throw  new IllegalArgumentException("id가 잘못됨");
+        }
+        return null;
+    }
 }

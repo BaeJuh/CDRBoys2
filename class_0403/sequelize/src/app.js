@@ -16,7 +16,7 @@ nunjucks.configure("views", {
 
 sequelize.sync({ force: false })
     .then(() => {
-        console.log("Database connected");
+        console.log("!!! Database connected");
     })
     .catch((err) => {
         console.error(err);

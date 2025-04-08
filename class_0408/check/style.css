@@ -26,6 +26,9 @@
 .navArea ul li a:hover {
   font-size: 21px;
 }
+.navArea .mobileButton {
+  display: none;
+}
 
 .contentArea {
   width: 100%;
@@ -64,4 +67,20 @@
   color: white;
   font-size: 20px;
   font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .navArea {
+    justify-content: left;
+    height: auto;
+  }
+  .navArea .mobileButton {
+    display: inline;
+  }
+  .navArea ul {
+    display: none;
+  }
+  .navArea ul li {
+    width: 100%;
+  }
 }/*# sourceMappingURL=style.css.map */

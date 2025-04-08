@@ -29,13 +29,30 @@ const weatherSetter = async () => {
     weatherArea.innerHTML = `<p>${weatherType}</p><p>${weatherTemp.toFixed(1)} 도</p>`;
 }
 
+const mobileButton = () => {
+    const btn = document.getElementById("mobileButton");
+    const menus = document.getElementById("menus");
+
+    let onMenuFlag = false;
+
+    btn.addEventListener("click", () => {
+        if (onMenuFlag) {
+            menus.style.display = "none";
+        } else {
+            menus.style.display = "block";
+        }
+        onMenuFlag = !onMenuFlag;
+    });
+}
+
 const run = () => {
     let runtime = 0;
 
     weatherSetter();
+    mobileButton();
+
     imageSetter(runtime);
     sentenceSetter(runtime);
-
     setInterval(() => {
         runtime ++;
         imageSetter(runtime%4);

@@ -30,6 +30,10 @@ $navHeight: 50px;
             font-size: 21px;
         }
     }
+
+    .mobileButton {
+        display: none;
+    }
 }
 
 .contentArea {
@@ -80,6 +84,23 @@ $navHeight: 50px;
         font: {
             size: 20px;
             weight: 600;
+        }
+    }
+}
+
+@media (max-width:600px) {
+    .navArea {
+        justify-content: left;
+        height: auto;
+        .mobileButton {
+            display: inline;
+        }
+
+        ul {
+            display: none;
+        }
+        ul li {
+            width: 100%;
         }
     }
 }

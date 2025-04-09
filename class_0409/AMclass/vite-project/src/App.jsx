@@ -7,8 +7,6 @@ import Gallery from './pages/Gallery';
 
 import "./App.css";
 
-// https://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&lang=kr&appid=412e20d92030bf157d7b8e8e05c5d379
-
 function App() {
 
 

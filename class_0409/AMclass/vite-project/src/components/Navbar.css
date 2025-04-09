@@ -1,0 +1,30 @@
+.navbar {
+    width: 100%;
+    height: 50px;
+
+    background-color: #03030350;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    justify-self: center;
+    gap: 20px;
+
+    padding: 1rem;
+    z-index: 1000;
+
+    font-size: 1.5rem;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #FFF;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: all .3s ease;
+}
+
+.navbar a:hover {
+    color: #ff6347;
+}

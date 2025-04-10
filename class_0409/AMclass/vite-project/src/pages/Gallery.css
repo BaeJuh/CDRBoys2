@@ -1,0 +1,18 @@
+.galleryOutbox {
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+.scrollImg {
+    overflow: hidden;
+    padding: 40px;
+}
+
+.scrollTrack {
+    display: flex;
+    width: max-content;
+    gap: 30px;
+
+    animation: leftscroll 40s linear infinite;
+    animation-play-state: running;
+}

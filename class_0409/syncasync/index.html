@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <pre id="result"></pre>
+
+    <script>
+        const $result = document.getElementById("result");
+        const render = content => { $result.textContent = JSON.stringify(content, null, 2); }
+
+        // const promiseAjax = (method, url, payload) => {
+        //     return new Promise((resolve, reject) => {
+        //         const xhr = new XMLHttpRequest();
+
+        //         xhr.open(method, url);
+        //         xhr.setRequestHeader("Content-type", "application/json");
+        //         xhr.send(JSON.stringify(payload));
+
+        //         xhr.onreadystatechange = () => {
+        //             if (xhr.readyState !== XMLHttpRequest.DONE) return;
+
+        //             if (xhr.status >= 200 && xhr.status < 400) {
+        //                 resolve(xhr.response);
+        //             } else {
+        //                 reject(new Error(xhr.status));
+        //             }
+        //         }
+        //     });
+        // }
+
+        const url = "https://jsonplaceholder.typicode.com/posts";
+
+        // promiseAjax("GET", `${url}/1`)
+        //     .then(res => promiseAjax("GET", `${url}?userId=${JSON.parse(res).userId}`))
+        //     .then(JSON.parse)
+        //     .then(render)
+        //     .catch(console.error);
+
+        const promiseAjax = (method, url, payload) => {
+            const xhr = new XMLHttpRequest();
+
+            xhr.open(method, url);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.send(JSON.stringify(payload));
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState !== XMLHttpRequest.DONE) return;
+
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    xhr.open(method, `${url}?userId=${JSON.parse(xhr.response).userId}`);
+                    xhr.setRequestHeader("Content-type", "application/json");
+                    xhr.send(JSON.stringify(payload));
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState !== XMLHttpRequest.DONE) return;
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            render(JSON.parse(xhr.response));
+                        } else {
+                            console.error(new Error(xhr.status));
+                        }
+                    }
+                } else {
+                    console.error(new Error(xhr.status));
+                }
+            }
+        }
+
+        promiseAjax("GET", `${url}/1`);
+
+    </script>
+</body>
+
+</html>

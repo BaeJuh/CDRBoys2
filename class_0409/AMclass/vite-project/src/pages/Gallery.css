@@ -8,11 +8,83 @@
     padding: 40px;
 }
 
+.scrollImg:hover .scrollTrack {
+    animation-play-state: paused;
+}
+
 .scrollTrack {
     display: flex;
     width: max-content;
     gap: 30px;
 
-    animation: leftscroll 40s linear infinite;
+    animation: leftScroll 40s linear infinite;
     animation-play-state: running;
+}
+
+.scrollInBox {
+    width: 300px;
+    text-align: center;
+
+    transition: all 1s ease;
+}
+
+.scrollInBox:hover {
+    transform: scale(1.05);
+}
+
+.scrollInBox img {
+    width: 100%;
+    height: 300px;
+
+    /* background-position: center;
+    background-size: cover; */
+    object-fit: cover;
+
+    border-radius: 10px;
+}
+
+@keyframes leftScroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.fadeSection {
+    display: flex;
+    /* gap: 40px; */
+    justify-content: center;
+    align-items: center;
+
+    max-width: 1200px;
+}
+
+.imgBox {
+    width: 50%;
+}
+
+.imgBox img {
+    width: 80%;
+    height: 300px;
+    margin: 50px auto;
+
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.groupImg {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.groupImgBox {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+
+    border-radius: 10px;
+
 }

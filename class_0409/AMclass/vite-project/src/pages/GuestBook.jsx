@@ -21,8 +21,9 @@ const GuestBook = () => {
     }, []);
 
     const submitPost = async (e) => {
+        e.preventDefault();
         try {
-            const res = await axios.get("http://localhost:8080/guset");
+            await axios.get("http://localhost:8080/guset");
             setPostData({ name: "", message: "" });
         } catch (error) {
             console.error(error);
@@ -37,7 +38,7 @@ const GuestBook = () => {
                 <input type="text" value={postData.name} placeholder="name?"
                     onChange={(e) => setPostData({ ...postData, name: e.target.value })}
                     required />
-                <textarea type="text" value={postData.name} placeholder="message?"
+                <textarea type="text" value={postData.message} placeholder="message?"
                     onChange={(e) => setPostData({ ...postData, message: e.target.value })}
                     required />
                 <button type="submit">등록</button>

@@ -1,0 +1,33 @@
+@use "./mixin" as *;
+@use "./variables" as *;
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 1.8rem;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    color: $text-color;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    z-index: 1000;
+
+    .logo {
+        font: {
+            size: 1.6rem;
+            weight: 900;
+        }
+        position: absolute;
+        left: 3rem;
+    }
+    nav {
+        position: absolute;
+        right: 3rem;
+    }
+}

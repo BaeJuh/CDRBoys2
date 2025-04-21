@@ -1,0 +1,33 @@
+@use "./mixin" as *;
+@use "./variables" as *;
+
+*, *::after, *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    @include response(tablet) {
+        font-size: 14px;
+    }
+    @include response(mobile) {
+        font-size: 12px;
+    }
+}
+
+body {
+    background-color: $bg-color;
+    color: $text-color;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: $text-color;
+}
+
+ul {
+    list-style: none;
+}

@@ -20,14 +20,61 @@
 
     .logo {
         font: {
-            size: 1.6rem;
+            size: 2rem;
             weight: 900;
-        }
+        };
         position: absolute;
         left: 3rem;
+
+        a {
+            color: $accent-color;
+        }
     }
     nav {
         position: absolute;
         right: 3rem;
+
+        ul {
+            display: flex;
+            gap: 2rem;
+            justify-content: right;
+            align-items: center;
+            // margin-right: 3rem;
+            li {
+                list-style: none;
+                a {
+                    padding: 10px;
+                    font: {
+                        size: 1.5rem;
+                        weight: 900;
+                    };
+                }
+            }
+        }
+    }
+
+    .hamburger {
+        display: none;
+        font: {
+            size: 1.5rem;
+        }
+        padding: 2rem;
+
+        cursor: pointer;
+    }
+
+    @include response(mobile) {
+        flex-direction: column;
+        align-items: flex-end;
+        
+        .hamburger {
+            display: block;
+            padding: 0;
+            margin-right: 5rem;
+        }
+        .link-nav {
+            display: none;
+        }
     }
 }
+
